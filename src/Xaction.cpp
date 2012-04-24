@@ -1,6 +1,7 @@
 #include "Xaction.hpp"
 
 #include <libecap/common/errors.h>
+#include <libecap/host/xaction.h>
 
 using namespace ExifAdapter;
 

@@ -1,8 +1,8 @@
 #ifndef __XACTION_HPP__
 #define __XACTION_HPP__
 
+#include <libecap/common/forward.h>
 #include <libecap/adapter/xaction.h>
-#include <libecap/host/xaction.h>
 
 namespace ExifAdapter
 {

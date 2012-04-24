@@ -2,7 +2,7 @@
 #define __SERVICE_HPP__
 
 #include <libecap/adapter/service.h>
-#include <libecap/adapter/xaction.h>
+#include <libecap/common/forward.h>
 
 namespace ExifAdapter
 {
