@@ -43,8 +43,22 @@ public:
     // libecap::Callable API, via libecap::host::Xaction
     virtual bool callable() const;
 
+    bool shouldProcess() const;
+
+    bool openTemporaryFile();
+    void closeTemporaryFile();
+    void removeTemporaryFile();
+
 private:
     libecap::host::Xaction *hostx; // Host transaction rep
+
+    int tmp_fd;
+    int vb_offset;
+    std::string tmp_filename;
+
+    int ab_offset;
+
+    bool vb_at_end;
 };
 
 }
