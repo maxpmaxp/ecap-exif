@@ -18,7 +18,7 @@ public:
         {
             if (debug_stream)
             {
-                *debug_stream << "EXIF-eCAP: " << msg;
+                *debug_stream  << msg;
             }
 
             return *this;

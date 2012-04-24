@@ -9,6 +9,10 @@ using namespace ExifAdapter;
 Log::Log(const libecap::LogVerbosity& verbosity)
     : debug_stream(libecap::MyHost().openDebug(verbosity))
 {
+    if (debug_stream)
+    {
+        *debug_stream << "EXIF-eCAP: ";
+    }
 }
 
 //------------------------------------------------------------------------------
