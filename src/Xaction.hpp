@@ -43,9 +43,6 @@ public:
     // libecap::Callable API, via libecap::host::Xaction
     virtual bool callable() const;
 
-protected:
-    void noBodySupport() const;
-
 private:
     libecap::host::Xaction *hostx; // Host transaction rep
 };

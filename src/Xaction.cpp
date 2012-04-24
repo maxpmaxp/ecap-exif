@@ -68,32 +68,24 @@ void Xaction::stop()
 void Xaction::abDiscard()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abDiscard";
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
 void Xaction::abMake()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abMake";
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
 void Xaction::abMakeMore()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abMakeMore";
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
 void Xaction::abStopMaking()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abStopMaking";
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +97,6 @@ libecap::Area Xaction::abContent(
         << "abContent offset: " << offset
         << " size: " << size;
 
-    noBodySupport();
     return libecap::Area();
 }
 
@@ -114,8 +105,6 @@ void Xaction::abContentShift(libecap::size_type bytes)
 {
     Log(libecap::flXaction | libecap::ilDebug)
         << "abContentShift bytes: " << bytes;
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
@@ -123,27 +112,16 @@ void Xaction::noteVbContentDone(bool at_end)
 {
     Log(libecap::flXaction | libecap::ilDebug)
         << "noteVbContentDone at_end: " << at_end;
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
 void Xaction::noteVbContentAvailable()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "noteVbContentAvailable";
-
-    noBodySupport();
 }
 
 //------------------------------------------------------------------------------
 bool Xaction::callable() const
 {
     return hostx != 0; // no point to call us if we are done
-}
-
-//------------------------------------------------------------------------------
-void Xaction::noBodySupport() const
-{
-	Must(!"must not be called: minimal adapter offers no body support");
-	// not reached
 }
