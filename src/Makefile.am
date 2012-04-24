@@ -1,14 +1,18 @@
 EXTRA_DIST = \
-	adapter_exif.cpp
+	Adapter.cpp \
+	Service.cpp \
+	Xaction.cpp
 
 lib_LTLIBRARIES = \
 	ecap_adapter_exif.la
 
 noinst_HEADERS = \
+	Service.hpp \
+	Xaction.hpp \
 	\
 	autoconf.h
 
-ecap_adapter_exif_la_SOURCES = adapter_exif.cpp
+ecap_adapter_exif_la_SOURCES = Adapter.cpp Service.cpp Xaction.cpp
 ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS)
 
 # -shared -export-dynamic -Wl,-soname,ecap_noop_adapter.so
