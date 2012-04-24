@@ -1,0 +1,45 @@
+#                                               -*- Autoconf -*-
+#  @configure_input@
+#
+#  Configuration scipt for eCAP EXIF adapter
+#
+# Process this file with autoconf to produce a configure script.
+
+AC_INIT(eCAP EXIF Adapter, 0.0.1, [], ecap_adapter_exif)
+AC_CONFIG_AUX_DIR(cfgaux)
+AC_CONFIG_MACRO_DIR(cfgaux)
+AC_CONFIG_SRCDIR([src/adapter_exif.cpp])
+AC_CONFIG_HEADERS(src/autoconf.h)
+
+AM_INIT_AUTOMAKE([nostdinc])
+AM_MAINTAINER_MODE
+
+LT_INIT
+
+m4_include(cfgaux/xstd_common.ac)
+m4_include(cfgaux/xstd_cpp_checks.ac)
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+
+# Checks for libraries.
+
+PKG_CHECK_MODULES(libecap, [libecap > 0.2 libecap < 0.3])
+
+# Checks for typedefs, structures, and compiler characteristics.
+# AC_HEADER_STDBOOL
+# AC_C_CONST
+
+# Checks for library functions.
+
+AC_CONFIG_FILES([\
+        Makefile \
+        src/Makefile \
+])
+AC_OUTPUT
