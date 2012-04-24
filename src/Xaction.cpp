@@ -53,8 +53,59 @@ void Xaction::stop()
 }
 
 //------------------------------------------------------------------------------
+void Xaction::abDiscard()
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::abMake()
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::abMakeMore()
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::abStopMaking()
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+libecap::Area Xaction::abContent(
+    libecap::size_type,
+    libecap::size_type)
+{
+    noBodySupport();
+    return libecap::Area();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::abContentShift(libecap::size_type)
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::noteVbContentDone(bool)
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
+void Xaction::noteVbContentAvailable()
+{
+    noBodySupport();
+}
+
+//------------------------------------------------------------------------------
 bool Xaction::callable() const {
-	return hostx != 0; // no point to call us if we are done
+    return hostx != 0; // no point to call us if we are done
 }
 
 //------------------------------------------------------------------------------

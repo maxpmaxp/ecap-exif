@@ -25,45 +25,20 @@ public:
     virtual void stop();
 
     // adapted body transmission control
-    virtual void abDiscard()
-        {
-            noBodySupport();
-        }
-    virtual void abMake()
-        {
-            noBodySupport();
-        }
-    virtual void abMakeMore()
-        {
-            noBodySupport();
-        }
-    virtual void abStopMaking()
-        {
-            noBodySupport();
-        }
+    virtual void abDiscard();
+    virtual void abMake();
+    virtual void abMakeMore();
+    virtual void abStopMaking();
 
     // adapted body content extraction and consumption
     virtual libecap::Area abContent(
         libecap::size_type,
-        libecap::size_type)
-        {
-            noBodySupport();
-            return libecap::Area();
-        }
-    virtual void abContentShift(libecap::size_type)
-        {
-            noBodySupport();
-        }
+        libecap::size_type);
+    virtual void abContentShift(libecap::size_type);
 
     // virgin body state notification
-    virtual void noteVbContentDone(bool)
-        {
-            noBodySupport();
-        }
-    virtual void noteVbContentAvailable()
-        {
-            noBodySupport();
-        }
+    virtual void noteVbContentDone(bool);
+    virtual void noteVbContentAvailable();
 
     // libecap::Callable API, via libecap::host::Xaction
     virtual bool callable() const;
