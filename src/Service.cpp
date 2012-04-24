@@ -68,7 +68,7 @@ void Service::retire()
 //------------------------------------------------------------------------------
 bool Service::wantsUrl(const char *url) const
 {
-	return true; // minimal adapter is applied to all messages
+	return true;
 }
 
 //------------------------------------------------------------------------------
