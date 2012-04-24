@@ -1,14 +1,14 @@
 #                                               -*- Autoconf -*-
 #  @configure_input@
 #
-#  Configuration scipt for eCAP EXIF adapter
+#  Configuration scipt for eCAP EXIF metadata filter
 #
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(eCAP EXIF Adapter, 0.0.1, [], ecap_adapter_exif)
+AC_INIT(eCAP EXIF metadata filter, 0.0.1, [], ecap_adapter_exif)
 AC_CONFIG_AUX_DIR(cfgaux)
 AC_CONFIG_MACRO_DIR(cfgaux)
-AC_CONFIG_SRCDIR([src/adapter_exif.cpp])
+AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_HEADERS(src/autoconf.h)
 
 AM_INIT_AUTOMAKE([nostdinc])
