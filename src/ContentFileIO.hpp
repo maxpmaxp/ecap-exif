@@ -1,8 +1,6 @@
 #ifndef __CONTENT_FILE_IO_HPP__
 #define __CONTENT_FILE_IO_HPP__
 
-#include <libecap/common/area.h>
-
 #include "ContentIO.hpp"
 
 namespace ExifAdapter

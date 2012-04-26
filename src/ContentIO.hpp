@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <libecap/common/area.h>
+
 #include "MetadataFilter.hpp"
 
 namespace ExifAdapter
