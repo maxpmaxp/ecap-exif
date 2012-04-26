@@ -4,6 +4,8 @@
 #include <libecap/common/forward.h>
 #include <libecap/adapter/xaction.h>
 
+#include "ContentIO.hpp"
+
 namespace ExifAdapter
 {
 
@@ -45,20 +47,13 @@ public:
 
     bool shouldProcess() const;
 
-    bool openTemporaryFile();
-    void closeTemporaryFile();
-    void removeTemporaryFile();
-
 private:
     libecap::host::Xaction *hostx; // Host transaction rep
 
-    int tmp_fd;
     int vb_offset;
-    std::string tmp_filename;
-
-    int ab_offset;
-
     bool vb_at_end;
+
+    libecap::shared_ptr<ContentIO> content;
 };
 
 }

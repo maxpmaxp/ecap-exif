@@ -1,12 +1,7 @@
 #include "Xaction.hpp"
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <errno.h>
-#include <fcntl.h>
 #include <sstream>
-#include <sys/stat.h>
+#include <stdexcept>
 
 #include <libecap/common/errors.h>
 #include <libecap/common/header.h>
@@ -15,20 +10,18 @@
 #include <libecap/common/names.h>
 #include <libecap/host/xaction.h>
 
+#include "ContentFileIO.hpp"
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
 
 using namespace ExifAdapter;
 
-const char* TEMPORARY_FILENAME_FORMAT = "/tmp/exif-ecap-XXXXXX";
 const libecap::size_type MAX_AB_CONTENT_SIZE = 32 * 1024;
 
 //------------------------------------------------------------------------------
 Xaction::Xaction(libecap::host::Xaction *x)
     : hostx(x)
-    , tmp_fd(0)
     , vb_offset(0)
-    , ab_offset(0)
     , vb_at_end(false)
 {
     Log(libecap::flXaction | libecap::ilDebug) << "Xaction";
@@ -78,6 +71,10 @@ void Xaction::start()
         return;
     }
 
+    Must(!content);
+    content = ContentFileIO::FromTemporaryFile();
+    Must(content);
+
     hostx->vbMake();
 }
 
@@ -89,7 +86,7 @@ void Xaction::stop()
 	hostx = 0;
 	// the caller will delete
 
-    removeTemporaryFile();
+    content.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +100,8 @@ void Xaction::abMake()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abMake";
 
-    ab_offset = 0;
+    content->ResetOffset();
+
     hostx->noteAbContentAvailable();
     hostx->noteAbContentDone(vb_at_end);
 }
@@ -112,12 +110,14 @@ void Xaction::abMake()
 void Xaction::abMakeMore()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abMakeMore";
+    // FIXME: handle
 }
 
 //------------------------------------------------------------------------------
 void Xaction::abStopMaking()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "abStopMaking";
+    // FIXME: handle
 }
 
 //------------------------------------------------------------------------------
@@ -129,27 +129,10 @@ libecap::Area Xaction::abContent(
         << "abContent offset: " << offset
         << " size: " << size;
 
-    if (size == 0)
-    {
-        return libecap::Area();
-    }
-
-    Must(tmp_fd);
-
-    const libecap::size_type position = ab_offset + offset;
-    Must(lseek(tmp_fd, position, SEEK_SET) != -1);
-
-    const libecap::size_type buffer_size =
+    const libecap::size_type corrected_size =
         std::min(size, MAX_AB_CONTENT_SIZE);
-    char buffer[buffer_size];
 
-    const ssize_t result = read(tmp_fd, buffer, sizeof(buffer));
-    if (result != -1)
-    {
-        return libecap::Area::FromTempBuffer(buffer, result);
-    }
-
-    return libecap::Area();
+    return content->Read(offset, corrected_size);
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +141,7 @@ void Xaction::abContentShift(libecap::size_type bytes)
     Log(libecap::flXaction | libecap::ilDebug)
         << "abContentShift bytes: " << bytes;
 
-    ab_offset += bytes;
+    content->Shift(bytes);
 }
 
 //------------------------------------------------------------------------------
@@ -179,29 +162,16 @@ void Xaction::noteVbContentDone(bool at_end)
         return;
     }
 
-    closeTemporaryFile();
-
-    ExivMetadataFilter filter;
+    libecap::shared_ptr<MetadataFilter> filter(new ExivMetadataFilter());
     try
     {
-        filter.ProcessFile(tmp_filename);
+        content->ApplyFilter(filter);
     }
     catch (std::exception& e)
     {
         Log(libecap::flXaction | libecap::ilDebug)
-            << "metadata filter failed to process file "
-            << tmp_filename
+            << "metadata filter failed to process data "
             << ": " << e.what();
-        hostx->useVirgin();
-        return;
-    }
-
-    tmp_fd = open(tmp_filename.c_str(), O_RDONLY);
-    if (tmp_fd == -1)
-    {
-        tmp_fd = 0;
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to open processed file";
         hostx->useVirgin();
         return;
     }
@@ -211,22 +181,22 @@ void Xaction::noteVbContentDone(bool at_end)
 
     adapted->header().removeAny(libecap::headerContentLength);
 
-    struct stat statbuf;
+    try
+    {
+        uint64_t content_length = content->GetLength();
 
-    if (fstat(tmp_fd, &statbuf) == -1)
-    {
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to get temporary file size: "
-            << strerror(errno);
-    }
-    else
-    {
         std::stringstream output;
-        output << statbuf.st_size;
+        output << content_length;
 
         const libecap::Header::Value length =
             libecap::Area::FromTempString(output.str());
         adapted->header().add(libecap::headerContentLength, length);
+    }
+    catch (std::runtime_error& e)
+    {
+        Log(libecap::flXaction | libecap::ilDebug)
+            << "failed to get content length: "
+            << e.what();
     }
 
     hostx->useAdapted(adapted);
@@ -241,22 +211,18 @@ void Xaction::noteVbContentAvailable()
 
     const libecap::Area vb = hostx->vbContent(0, libecap::nsize);
 
-    if (!tmp_fd && !openTemporaryFile())
+    try
     {
-        return;
+        const size_t written = content->Write(vb);
+        vb_offset += written;
+        hostx->vbContentShift(written);
     }
-
-    const size_t written = write(tmp_fd, vb.start, vb.size);
-    if (written != vb.size)
+    catch (std::runtime_error& e)
     {
         Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to write data to temporary file: "
-            << strerror(errno);
-        return;
+            << "failed to write vb data: "
+            << e.what();
     }
-
-    vb_offset += written;
-    hostx->vbContentShift(written);
 }
 
 //------------------------------------------------------------------------------
@@ -297,62 +263,4 @@ bool Xaction::shouldProcess() const
     Log(libecap::flXaction | libecap::ilDebug) << "should be processed";
 
     return true;
-}
-
-//------------------------------------------------------------------------------
-bool Xaction::openTemporaryFile()
-{
-    Must(!tmp_fd);
-
-    const int filename_length = 32;
-    char temporary_filename[filename_length];
-    memset(temporary_filename, 0, filename_length);
-    strncpy(temporary_filename, TEMPORARY_FILENAME_FORMAT, filename_length);
-
-    int result = mkstemp(temporary_filename);
-    if (result == -1)
-    {
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to create temporary file with format "
-            << temporary_filename
-            << ": " << strerror(errno);
-        return false;
-    }
-
-    tmp_filename = temporary_filename;
-
-    tmp_fd = result;
-    return true;
-}
-
-//------------------------------------------------------------------------------
-void Xaction::closeTemporaryFile()
-{
-    if (tmp_fd)
-    {
-        if (close(tmp_fd) != 0)
-        {
-            Log(libecap::flXaction | libecap::ilDebug)
-                << "failed to close temporary file: "
-                << strerror(errno);
-        }
-
-        tmp_fd = 0;
-    }
-}
-
-//------------------------------------------------------------------------------
-void Xaction::removeTemporaryFile()
-{
-    if (!tmp_filename.empty())
-    {
-        if (remove(tmp_filename.c_str()) != 0)
-        {
-            Log(libecap::flXaction | libecap::ilDebug)
-                << "failed to remove temporary file: "
-                << strerror(errno);
-        }
-
-        tmp_filename.clear();
-    }
 }
