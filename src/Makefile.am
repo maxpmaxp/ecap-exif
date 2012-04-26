@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 	Adapter.cpp \
 	ContentFileIO.cpp \
+	ContentMemoryIO.hpp \
 	ExivMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \
@@ -12,6 +13,7 @@ lib_LTLIBRARIES = \
 noinst_HEADERS = \
 	ContentIO.hpp \
 	ContentFileIO.hpp \
+	ContentMemoryIO.hpp \
 	ExivMetadataFilter.hpp \
 	Log.hpp \
 	MetadataFilter.hpp \
@@ -23,6 +25,7 @@ noinst_HEADERS = \
 ecap_adapter_exif_la_SOURCES = \
 	Adapter.cpp \
 	ContentFileIO.cpp \
+	ContentMemoryIO.cpp \
 	ExivMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \
