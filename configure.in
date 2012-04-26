@@ -31,6 +31,7 @@ AC_PROG_MAKE_SET
 # Checks for libraries.
 
 PKG_CHECK_MODULES(libecap, [libecap > 0.2 libecap < 0.3])
+PKG_CHECK_MODULES(libexiv2, [exiv2])
 
 # Checks for typedefs, structures, and compiler characteristics.
 # AC_HEADER_STDBOOL

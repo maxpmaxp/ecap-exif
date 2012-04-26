@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <errno.h>
+#include <fcntl.h>
 #include <sstream>
 #include <sys/stat.h>
 
@@ -14,6 +15,7 @@
 #include <libecap/common/names.h>
 #include <libecap/host/xaction.h>
 
+#include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
 
 using namespace ExifAdapter;
@@ -173,6 +175,33 @@ void Xaction::noteVbContentDone(bool at_end)
     if (vb_offset == 0)
     {
         // there were no body
+        hostx->useVirgin();
+        return;
+    }
+
+    closeTemporaryFile();
+
+    ExivMetadataFilter filter;
+    try
+    {
+        filter.ProcessFile(tmp_filename);
+    }
+    catch (std::exception& e)
+    {
+        Log(libecap::flXaction | libecap::ilDebug)
+            << "metadata filter failed to process file "
+            << tmp_filename
+            << ": " << e.what();
+        hostx->useVirgin();
+        return;
+    }
+
+    tmp_fd = open(tmp_filename.c_str(), O_RDONLY);
+    if (tmp_fd == -1)
+    {
+        tmp_fd = 0;
+        Log(libecap::flXaction | libecap::ilDebug)
+            << "failed to open processed file";
         hostx->useVirgin();
         return;
     }
