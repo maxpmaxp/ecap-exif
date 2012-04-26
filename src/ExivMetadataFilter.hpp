@@ -14,6 +14,10 @@ public:
     ~ExivMetadataFilter();
 
     bool ProcessFile(const std::string& path);
+
+    bool ProcessMemory(
+        uint8_t** buffer,
+        int* size);
 };
 
 }
