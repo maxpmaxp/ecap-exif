@@ -4,6 +4,8 @@
 #include <cstring>
 #include <stdexcept>
 
+#include "MemoryAreaDetails.hpp"
+
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
@@ -78,12 +80,10 @@ libecap::Area ContentMemoryIO::Read(
         return libecap::Area();
     }
 
-    char buffer[correct_size];
-
-    memcpy(buffer, this->buffer + position, correct_size);
-
-    // TODO: copy directly to area
-    return libecap::Area::FromTempBuffer(buffer, correct_size);
+    libecap::shared_ptr<MemoryAreaDetails> details(
+        new MemoryAreaDetails(correct_size));
+    memcpy(details->GetAreaStart(), this->buffer + position, correct_size);
+    return libecap::Area(details->GetAreaStart(), correct_size, details);
 }
 
 //------------------------------------------------------------------------------

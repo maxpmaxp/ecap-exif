@@ -11,6 +11,7 @@
 #include <libecap/common/errors.h>
 
 #include "Log.hpp"
+#include "MemoryAreaDetails.hpp"
 
 using namespace ExifAdapter;
 
@@ -100,13 +101,13 @@ libecap::Area ContentFileIO::Read(
     const libecap::size_type position = this->offset + offset;
     Must(lseek(fd, position, SEEK_SET) != -1);
 
-    char buffer[size];
+    libecap::shared_ptr<MemoryAreaDetails> details(
+        new MemoryAreaDetails(size));
 
-    const ssize_t result = read(fd, buffer, sizeof(buffer));
+    const ssize_t result = read(fd, details->GetAreaStart(), size);
     if (result != -1)
     {
-        // TODO: check if there is a variant to read directly to Area
-        return libecap::Area::FromTempBuffer(buffer, result);
+        return libecap::Area(details->GetAreaStart(), result, details);
     }
 
     return libecap::Area();
