@@ -172,8 +172,8 @@ void Xaction::noteVbContentDone(bool at_end)
         Log(libecap::flXaction | libecap::ilDebug)
             << "metadata filter failed to process data "
             << ": " << e.what();
-        hostx->useVirgin();
-        return;
+        // host probably already got rid of virgin body
+        // so we have to return him unprocessed one
     }
 
     libecap::shared_ptr<libecap::Message> adapted = hostx->virgin().clone();
