@@ -12,10 +12,10 @@ class MetadataFilter
 public:
     virtual ~MetadataFilter() {};
 
-    virtual bool ProcessFile(const std::string& path) = 0;
+    virtual void ProcessFile(const std::string& path) = 0;
 
     // can realloc buffer
-    virtual bool ProcessMemory(
+    virtual void ProcessMemory(
         uint8_t** buffer,
         int* size) = 0;
 };

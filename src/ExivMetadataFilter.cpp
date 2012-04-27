@@ -1,5 +1,7 @@
 #include "ExivMetadataFilter.hpp"
 
+#include <stdexcept>
+
 #include <exiv2/error.hpp>
 #include <exiv2/image.hpp>
 
@@ -16,23 +18,22 @@ ExivMetadataFilter::~ExivMetadataFilter()
 }
 
 //------------------------------------------------------------------------------
-bool ExivMetadataFilter::ProcessFile(const std::string& path)
+void ExivMetadataFilter::ProcessFile(const std::string& path)
 {
     try
     {
         Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(path);
         image->clearMetadata();
         image->writeMetadata();
-        return true;
     }
     catch (Exiv2::AnyError& e)
     {
-        return false;
+        throw std::runtime_error(e.what());
     }
 }
 
 //------------------------------------------------------------------------------
-bool ExivMetadataFilter::ProcessMemory(
+void ExivMetadataFilter::ProcessMemory(
     uint8_t** buffer,
     int* size)
 {
@@ -53,17 +54,16 @@ bool ExivMetadataFilter::ProcessMemory(
                 std::realloc(*buffer, io.size()));
             if (new_buffer == NULL)
             {
-                return false;
+                throw std::runtime_error("Failed to allocate memory");
             }
             (*buffer) = new_buffer;
             (*size) = io.size();
         }
 
         std::memcpy(*buffer, io.mmap(), io.size());
-        return true;
     }
     catch (Exiv2::AnyError& e)
     {
-        return false;
+        throw std::runtime_error(e.what());
     }
 }

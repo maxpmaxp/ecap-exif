@@ -13,9 +13,9 @@ public:
     ExivMetadataFilter();
     ~ExivMetadataFilter();
 
-    bool ProcessFile(const std::string& path);
+    void ProcessFile(const std::string& path);
 
-    bool ProcessMemory(
+    void ProcessMemory(
         uint8_t** buffer,
         int* size);
 };

@@ -90,7 +90,6 @@ libecap::Area ContentMemoryIO::Read(
 void ContentMemoryIO::ApplyFilter(
     libecap::shared_ptr<MetadataFilter> filter)
 {
-    // FIXME: error handling
     int size = this->size; // because of data type
     filter->ProcessMemory(&buffer, &size);
     this->size = size;
