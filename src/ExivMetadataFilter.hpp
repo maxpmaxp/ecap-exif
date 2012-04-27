@@ -18,6 +18,8 @@ public:
     void ProcessMemory(
         uint8_t** buffer,
         int* size);
+
+    bool IsMimeTypeSupported(const std::string& mime_type);
 };
 
 }

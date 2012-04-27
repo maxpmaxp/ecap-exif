@@ -7,6 +7,27 @@
 
 using namespace ExifAdapter;
 
+// http://dev.exiv2.org/projects/exiv2/wiki/Supported_image_formats
+static const char* mime_types[] = {
+    "image/jpeg",
+//    "image/x-exv",
+//    "image/x-canon-cr2",
+//    "image/x-canon-crw",
+//    "image/tiff",
+//    "image/x-nikon-nef",
+//    "image/x-pentax-pef",
+//    "image/x-samsung-srw",
+//    "image/x-olympus-orf",
+//    "image/png",
+//    "image/pgf",
+//    "application/postscript",
+//    "application/rdf+xml",
+//    "image/x-photoshop",
+//    "image/targa",
+//    "image/jp2",
+    NULL,
+};
+
 //------------------------------------------------------------------------------
 ExivMetadataFilter::ExivMetadataFilter()
 {
@@ -66,4 +87,18 @@ void ExivMetadataFilter::ProcessMemory(
     {
         throw std::runtime_error(e.what());
     }
+}
+
+//------------------------------------------------------------------------------
+bool ExivMetadataFilter::IsMimeTypeSupported(
+    const std::string& mime_type)
+{
+    for (int i = 0; mime_types[i] == NULL; ++i)
+    {
+        if (mime_type == mime_types[i])
+        {
+            return true;
+        }
+    }
+    return false;
 }

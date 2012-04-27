@@ -5,6 +5,7 @@
 #include <libecap/adapter/xaction.h>
 
 #include "ContentIO.hpp"
+#include "MetadataFilter.hpp"
 
 namespace ExifAdapter
 {
@@ -45,16 +46,19 @@ public:
     // libecap::Callable API, via libecap::host::Xaction
     virtual bool callable() const;
 
-    bool shouldProcess() const;
-    void createAdaptedContentIo();
 
 private:
+    bool shouldProcess(const std::string& content_type) const;
+    void createAdaptedContentIo();
+    std::string getContentType() const;
+
     libecap::host::Xaction *hostx; // Host transaction rep
 
     int vb_offset;
     bool vb_at_end;
 
     libecap::shared_ptr<ContentIO> content;
+    libecap::shared_ptr<MetadataFilter> filter;
 };
 
 }

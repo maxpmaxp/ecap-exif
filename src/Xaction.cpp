@@ -62,7 +62,11 @@ void Xaction::start()
 
 	Must(hostx);
 
-    if (!shouldProcess())
+    filter.reset(new ExivMetadataFilter());
+
+    const std::string content_type = getContentType();
+
+    if (!shouldProcess(content_type))
     {
         // make this adapter non-callable
         libecap::host::Xaction *x = hostx;
@@ -87,6 +91,7 @@ void Xaction::stop()
 	// the caller will delete
 
     content.reset();
+    filter.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -162,7 +167,6 @@ void Xaction::noteVbContentDone(bool at_end)
         return;
     }
 
-    libecap::shared_ptr<MetadataFilter> filter(new ExivMetadataFilter());
     try
     {
         content->ApplyFilter(filter);
@@ -232,7 +236,7 @@ bool Xaction::callable() const
 }
 
 //------------------------------------------------------------------------------
-bool Xaction::shouldProcess() const
+bool Xaction::shouldProcess(const std::string& content_type) const
 {
     if (!hostx->virgin().body())
     {
@@ -240,27 +244,23 @@ bool Xaction::shouldProcess() const
         return false;
     }
 
-    const libecap::Name content_type_header("Content-Type");
-    const char* type_image_jpeg = "image/jpeg";
-
-    const libecap::Header &header = hostx->virgin().header();
-    if (!header.hasAny(content_type_header))
+    if (content_type.empty())
     {
-        Log(libecap::flXaction | libecap::ilDebug) << "no content type";
         return false;
     }
 
-    const libecap::Area type = header.value(content_type_header);
-    const std::string content_type_value(type.start, type.size);
-    if (content_type_value != type_image_jpeg)
+    if (!filter->IsMimeTypeSupported(content_type))
     {
         Log(libecap::flXaction | libecap::ilDebug)
-            << "content type " << content_type_value
+            << "content type " << content_type
             << " is not supported";
         return false;
     }
 
-    Log(libecap::flXaction | libecap::ilDebug) << "should be processed";
+    Log(libecap::flXaction | libecap::ilDebug)
+        << "content type "
+        << content_type
+        << " should be processed";
 
     return true;
 }
@@ -308,4 +308,21 @@ void Xaction::createAdaptedContentIo()
     }
 
     Must(content);
+}
+
+//------------------------------------------------------------------------------
+std::string Xaction::getContentType() const
+{
+    const libecap::Name content_type_header("Content-Type");
+
+    const libecap::Header &header = hostx->virgin().header();
+    if (!header.hasAny(content_type_header))
+    {
+        Log(libecap::flXaction | libecap::ilDebug) << "no content type";
+        return "";
+    }
+
+    const libecap::Area type = header.value(content_type_header);
+    const std::string content_type_value(type.start, type.size);
+    return content_type_value;
 }
