@@ -37,6 +37,7 @@ libecap::size_type ContentMemoryIO::Write(const libecap::Area& data)
             throw std::runtime_error("Failed to allocate memory");
         }
         this->buffer = buffer;
+        size = new_size;
     }
 
     memcpy(buffer + offset, data.start, data.size);
