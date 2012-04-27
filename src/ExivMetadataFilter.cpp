@@ -57,8 +57,8 @@ void ExivMetadataFilter::ProcessMemory(
                 throw std::runtime_error("Failed to allocate memory");
             }
             (*buffer) = new_buffer;
-            (*size) = io.size();
         }
+        (*size) = io.size();
 
         std::memcpy(*buffer, io.mmap(), io.size());
     }
