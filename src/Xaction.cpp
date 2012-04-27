@@ -11,12 +11,14 @@
 #include <libecap/host/xaction.h>
 
 #include "ContentFileIO.hpp"
+#include "ContentMemoryIO.hpp"
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
 
 using namespace ExifAdapter;
 
 const libecap::size_type MAX_AB_CONTENT_SIZE = 32 * 1024;
+const uint64_t MEMORY_STORE_LIMIT = 512 * 1024;
 
 //------------------------------------------------------------------------------
 Xaction::Xaction(libecap::host::Xaction *x)
@@ -71,9 +73,7 @@ void Xaction::start()
         return;
     }
 
-    Must(!content);
-    content = ContentFileIO::FromTemporaryFile();
-    Must(content);
+    createAdaptedContentIo();
 
     hostx->vbMake();
 }
@@ -263,4 +263,49 @@ bool Xaction::shouldProcess() const
     Log(libecap::flXaction | libecap::ilDebug) << "should be processed";
 
     return true;
+}
+
+//------------------------------------------------------------------------------
+void Xaction::createAdaptedContentIo()
+{
+    Must(!content);
+    Must(hostx);
+
+    bool store_in_memory = false;
+    uint64_t length = 0;
+
+    const libecap::Header &header = hostx->virgin().header();
+    if (!header.hasAny(libecap::headerContentLength))
+    {
+        Log(libecap::flXaction | libecap::ilDebug) << "no content length";
+    }
+    else
+    {
+        const libecap::Area area =
+            header.value(libecap::headerContentLength);
+        const std::string length_value(area.start, area.size);
+        std::istringstream is(length_value);
+        if (!(is >> length))
+        {
+            Log(libecap::flXaction | libecap::ilDebug) << "malformed content length";
+        }
+
+        if (length <= MEMORY_STORE_LIMIT)
+        {
+            store_in_memory = true;
+        }
+    }
+
+    if (store_in_memory)
+    {
+        Log(libecap::flXaction | libecap::ilDebug) << "store in memory";
+        content.reset(new ContentMemoryIO(length));
+    }
+    else
+    {
+        Log(libecap::flXaction | libecap::ilDebug) << "store on disk";
+        content = ContentFileIO::FromTemporaryFile();
+    }
+
+    Must(content);
 }

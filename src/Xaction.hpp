@@ -46,6 +46,7 @@ public:
     virtual bool callable() const;
 
     bool shouldProcess() const;
+    void createAdaptedContentIo();
 
 private:
     libecap::host::Xaction *hostx; // Host transaction rep
