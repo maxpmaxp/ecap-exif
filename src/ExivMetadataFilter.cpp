@@ -93,7 +93,7 @@ void ExivMetadataFilter::ProcessMemory(
 bool ExivMetadataFilter::IsMimeTypeSupported(
     const std::string& mime_type)
 {
-    for (int i = 0; mime_types[i] == NULL; ++i)
+    for (int i = 0; mime_types[i] != NULL; ++i)
     {
         if (mime_type == mime_types[i])
         {
