@@ -49,7 +49,7 @@ public:
 
 private:
     bool shouldProcess(const std::string& content_type) const;
-    void createAdaptedContentIo();
+    void createAdaptedContentIo(const std::string& content_type);
     std::string getContentType() const;
 
     libecap::host::Xaction *hostx; // Host transaction rep

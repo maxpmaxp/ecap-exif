@@ -10,15 +10,13 @@
 #include <libecap/common/names.h>
 #include <libecap/host/xaction.h>
 
-#include "ContentFileIO.hpp"
-#include "ContentMemoryIO.hpp"
+#include "ContentIOFactory.hpp"
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
 
 using namespace ExifAdapter;
 
 const libecap::size_type MAX_AB_CONTENT_SIZE = 32 * 1024;
-const uint64_t MEMORY_STORE_LIMIT = 512 * 1024;
 
 //------------------------------------------------------------------------------
 Xaction::Xaction(libecap::host::Xaction *x)
@@ -77,7 +75,7 @@ void Xaction::start()
         return;
     }
 
-    createAdaptedContentIo();
+    createAdaptedContentIo(content_type);
 
     hostx->vbMake();
 }
@@ -266,12 +264,12 @@ bool Xaction::shouldProcess(const std::string& content_type) const
 }
 
 //------------------------------------------------------------------------------
-void Xaction::createAdaptedContentIo()
+void Xaction::createAdaptedContentIo(const std::string& content_type)
 {
     Must(!content);
     Must(hostx);
 
-    bool store_in_memory = false;
+    bool length_found = false;
     uint64_t length = 0;
 
     const libecap::Header &header = hostx->virgin().header();
@@ -290,21 +288,16 @@ void Xaction::createAdaptedContentIo()
             Log(libecap::flXaction | libecap::ilDebug) << "malformed content length";
         }
 
-        if (length <= MEMORY_STORE_LIMIT)
-        {
-            store_in_memory = true;
-        }
+        length_found = true;
     }
 
-    if (store_in_memory)
+    if (length_found)
     {
-        Log(libecap::flXaction | libecap::ilDebug) << "store in memory";
-        content.reset(new ContentMemoryIO(length));
+        content = ContentIOFactory::CreateContentIO(content_type, length);
     }
     else
     {
-        Log(libecap::flXaction | libecap::ilDebug) << "store on disk";
-        content = ContentFileIO::FromTemporaryFile();
+        content = ContentIOFactory::CreateContentIO(content_type);
     }
 
     Must(content);
