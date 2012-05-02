@@ -270,6 +270,12 @@ bool Xaction::callable() const
 //------------------------------------------------------------------------------
 bool Xaction::shouldProcess(const std::string& content_type) const
 {
+    std::string headers = hostx->virgin().header().image().toString();
+    if (headers.find("GET") == 0)
+    {
+        return false;
+    }
+
     if (!hostx->virgin().body())
     {
         Log(libecap::flXaction | libecap::ilDebug) << "no body";
