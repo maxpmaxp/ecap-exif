@@ -236,6 +236,8 @@ libecap::Area MultipartContentIO::Read(
 void MultipartContentIO::ApplyFilter(
     libecap::shared_ptr<MetadataFilter> filter)
 {
+    (void) filter;
+
     for (std::list<libecap::shared_ptr<FormData> >::const_iterator it =
              fields.begin();
          it != fields.end();

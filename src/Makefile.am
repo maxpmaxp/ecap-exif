@@ -50,4 +50,4 @@ ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS) $(libexiv2
 DISTCLEANFILES = \
         autoconf.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS) -Wall -Wextra
