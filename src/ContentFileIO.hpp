@@ -28,7 +28,7 @@ private:
         int fd,
         const std::string& filename);
 
-    bool OpenFile();
+    void OpenFile();
     void CloseFile();
     void RemoveFile();
 

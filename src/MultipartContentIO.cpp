@@ -2,15 +2,14 @@
 
 #include <stdexcept>
 
+#include <libecap/common/errors.h>
+
 #include "ContentIOFactory.hpp"
 #include "Log.hpp"
 #include "MetadataFilterFactory.hpp"
 
 static const std::string CRLF("\r\n");
 static const std::string TRAILER("--\r\n");
-
-//#define LOG_WRITE
-//#define LOG_READ
 
 using namespace ExifAdapter;
 
@@ -49,12 +48,13 @@ MultipartContentIO::MultipartContentIO(
     size_t pos = content_type.find(boundary_key);
     if (pos == std::string::npos)
     {
-        throw std::invalid_argument("boundary not found");
+        std::string msg = "boundary not found";
+        Log(libecap::flXaction | libecap::ilNormal) << msg;
+        throw libecap::TextException(msg);
     }
     pos += boundary_key.length();
 
-    boundary = std::string("--") +
-        content_type.substr(pos);
+    boundary = std::string("--") + content_type.substr(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -244,7 +244,15 @@ void MultipartContentIO::ApplyFilter(
         libecap::shared_ptr<FormData> form_data = *it;
         if (form_data->filter)
         {
-            form_data->content->ApplyFilter(form_data->filter);
+            try
+            {
+                form_data->content->ApplyFilter(form_data->filter);
+            }
+            catch (MetadataFilter::Exception& e)
+            {
+                Log(libecap::flXaction | libecap::ilDebug)
+                    << "failed to apply filter " << e.what();
+            }
         }
     }
 }

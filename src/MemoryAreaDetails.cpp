@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#include <libecap/common/errors.h>
+
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
@@ -12,7 +14,7 @@ MemoryAreaDetails::MemoryAreaDetails(libecap::size_type size)
     start = static_cast<char*>(std::malloc(size));
     if (start == NULL)
     {
-        throw std::runtime_error("Failed to allocate memory");
+        throw libecap::TextException("Failed to allocate memory");
     }
 }
 

@@ -4,6 +4,8 @@
 #include <cstring>
 #include <stdexcept>
 
+#include <libecap/common/errors.h>
+
 #include "MemoryAreaDetails.hpp"
 
 using namespace ExifAdapter;
@@ -16,7 +18,7 @@ ContentMemoryIO::ContentMemoryIO(libecap::size_type expected_size)
     buffer = static_cast<uint8_t*>(std::malloc(expected_size));
     if (buffer == NULL)
     {
-        throw std::runtime_error("Failed to allocate memory");
+        throw libecap::TextException("Failed to allocate memory");
     }
     std::memset(buffer, 0, expected_size);
 }
@@ -37,7 +39,7 @@ libecap::size_type ContentMemoryIO::Write(const libecap::Area& data)
             std::realloc(this->buffer, new_size));
         if (buffer == NULL)
         {
-            throw std::runtime_error("Failed to allocate memory");
+            throw libecap::TextException("Failed to allocate memory");
         }
         this->buffer = buffer;
         size = new_size;

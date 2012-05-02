@@ -169,7 +169,7 @@ void Xaction::noteVbContentDone(bool at_end)
     {
         content->ApplyFilter(filter);
     }
-    catch (std::exception& e)
+    catch (MetadataFilter::Exception& e)
     {
         Log(libecap::flXaction | libecap::ilDebug)
             << "metadata filter failed to process data "
@@ -183,23 +183,14 @@ void Xaction::noteVbContentDone(bool at_end)
 
     adapted->header().removeAny(libecap::headerContentLength);
 
-    try
-    {
-        uint64_t content_length = content->GetLength();
+    uint64_t content_length = content->GetLength();
 
-        std::stringstream output;
-        output << content_length;
+    std::stringstream output;
+    output << content_length;
 
-        const libecap::Header::Value length =
-            libecap::Area::FromTempString(output.str());
-        adapted->header().add(libecap::headerContentLength, length);
-    }
-    catch (std::runtime_error& e)
-    {
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to get content length: "
-            << e.what();
-    }
+    const libecap::Header::Value length =
+        libecap::Area::FromTempString(output.str());
+    adapted->header().add(libecap::headerContentLength, length);
 
     hostx->useAdapted(adapted);
 }
@@ -213,18 +204,9 @@ void Xaction::noteVbContentAvailable()
 
     const libecap::Area vb = hostx->vbContent(0, libecap::nsize);
 
-    try
-    {
-        const size_t written = content->Write(vb);
-        vb_offset += written;
-        hostx->vbContentShift(written);
-    }
-    catch (std::runtime_error& e)
-    {
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to write vb data: "
-            << e.what();
-    }
+    const size_t written = content->Write(vb);
+    vb_offset += written;
+    hostx->vbContentShift(written);
 }
 
 //------------------------------------------------------------------------------

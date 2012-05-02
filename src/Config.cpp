@@ -98,5 +98,6 @@ void Config::SetMemoryFilesizeLimit(const std::string& value)
         return;
     }
 
-    throw libecap::TextException("invalid memory_filesize_limit value");
+    throw libecap::TextException(
+        "EXIF-eCAP: invalid memory_filesize_limit value");
 }

@@ -25,6 +25,7 @@ public:
         libecap::size_type offset,
         libecap::size_type size) = 0;
 
+    // throws if failed to apply filter
     virtual void ApplyFilter(libecap::shared_ptr<MetadataFilter> filter) = 0;
 
     virtual uint64_t GetLength() const = 0;

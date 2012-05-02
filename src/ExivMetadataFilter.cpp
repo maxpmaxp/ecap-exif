@@ -1,7 +1,5 @@
 #include "ExivMetadataFilter.hpp"
 
-#include <stdexcept>
-
 #include <exiv2/error.hpp>
 #include <exiv2/image.hpp>
 
@@ -49,7 +47,7 @@ void ExivMetadataFilter::ProcessFile(const std::string& path)
     }
     catch (Exiv2::AnyError& e)
     {
-        throw std::runtime_error(e.what());
+        throw MetadataFilter::Exception(e.what());
     }
 }
 
@@ -85,7 +83,7 @@ void ExivMetadataFilter::ProcessMemory(
     }
     catch (Exiv2::AnyError& e)
     {
-        throw std::runtime_error(e.what());
+        throw MetadataFilter::Exception(e.what());
     }
 }
 

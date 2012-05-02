@@ -22,21 +22,26 @@ libecap::shared_ptr<ContentFileIO> ContentFileIO::FromTemporaryFile()
     Config* config = Config::GetConfig();
     std::string tmp_filename_format = config->GetTemporaryFilenameFormat();
     unsigned filename_length = tmp_filename_format.size();
-    char temporary_filename[filename_length];
-    memset(temporary_filename, 0, filename_length);
+    char* temporary_filename =
+        static_cast<char*>(std::malloc(filename_length + 1));
+    memset(temporary_filename, 0, filename_length + 1);
     strncpy(temporary_filename, tmp_filename_format.c_str(), filename_length);
 
     int result = mkstemp(temporary_filename);
     if (result == -1)
     {
-        std::string msg = "failed to create temporary file with format " +
-            tmp_filename_format + ": " + strerror(errno);
-         Log(libecap::flXaction | libecap::ilCritical) << msg;
-         throw libecap::TextException(msg);
+        std::string msg =
+            std::string("failed to create temporary file with format ") +
+            temporary_filename + ": " + strerror(errno);
+        std::free(temporary_filename);
+        Log(libecap::flXaction | libecap::ilNormal) << msg;
+        throw libecap::TextException(msg);
     }
 
+    std::string filename = temporary_filename;
+    std::free(temporary_filename);
     return libecap::shared_ptr<ContentFileIO>(
-        new ContentFileIO(result, temporary_filename));
+        new ContentFileIO(result, filename));
 }
 
 //------------------------------------------------------------------------------
@@ -58,15 +63,18 @@ ContentFileIO::~ContentFileIO()
 //------------------------------------------------------------------------------
 size_t ContentFileIO::Write(const libecap::Area& data)
 {
-    if (!fd && !OpenFile())
+    if (!fd)
     {
-        throw std::runtime_error("Failed to open file");
+        OpenFile();
     }
 
     const size_t written = write(fd, data.start, data.size);
     if (written != data.size)
     {
-        throw std::runtime_error(strerror(errno));
+        std::string msg =
+            std::string("Failed to write to file: ") + strerror(errno);
+        Log(libecap::flXaction | libecap::ilNormal) << msg;
+        throw libecap::TextException(msg);
     }
 
     return written;
@@ -123,10 +131,7 @@ void ContentFileIO::ApplyFilter(libecap::shared_ptr<MetadataFilter> filter)
 
     filter->ProcessFile(filename);
 
-    if (!OpenFile())
-    {
-        throw std::runtime_error("Failed to open processed file");
-    }
+    OpenFile();
 }
 
 //------------------------------------------------------------------------------
@@ -136,27 +141,27 @@ uint64_t ContentFileIO::GetLength() const
 
     if (fstat(fd, &statbuf) == -1)
     {
-        throw std::runtime_error(strerror(errno));
+        std::string msg = std::string("Failed to get file size of ") +
+            filename + ": " + strerror(errno);
+        Log(libecap::flXaction | libecap::ilNormal) << msg;
+        throw libecap::TextException(msg);
     }
 
     return statbuf.st_size;
 }
 
 //------------------------------------------------------------------------------
-bool ContentFileIO::OpenFile()
+void ContentFileIO::OpenFile()
 {
     fd = open(filename.c_str(), O_RDONLY);
     if (fd == -1)
     {
         fd = 0;
-        Log(libecap::flXaction | libecap::ilDebug)
-            << "failed to open file "
-            << filename
-            << ": " << strerror(errno);
-        return false;
+        std::string msg = "Failed to open file " + filename +
+            ": " + strerror(errno);
+        Log(libecap::flXaction | libecap::ilNormal) << msg;
+        throw libecap::TextException(msg);
     }
-
-    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -166,7 +171,7 @@ void ContentFileIO::CloseFile()
     {
         if (close(fd) != 0)
         {
-            Log(libecap::flXaction | libecap::ilDebug)
+            Log(libecap::flXaction | libecap::ilNormal)
                 << "failed to close file "
                 << filename << ": "
                 << strerror(errno);
