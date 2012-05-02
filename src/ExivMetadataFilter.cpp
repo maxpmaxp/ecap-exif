@@ -18,7 +18,7 @@ static const char* mime_types[] = {
 //    "image/x-pentax-pef",
 //    "image/x-samsung-srw",
 //    "image/x-olympus-orf",
-//    "image/png",
+    "image/png",
 //    "image/pgf",
 //    "application/postscript",
 //    "application/rdf+xml",
