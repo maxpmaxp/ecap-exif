@@ -1,5 +1,9 @@
 #include "Xaction.hpp"
 
+#ifdef MEASURE_EXECUTION_TIME
+#include <cstring>
+#endif
+
 #include <sstream>
 #include <stdexcept>
 
@@ -14,6 +18,17 @@
 #include "Log.hpp"
 #include "MetadataFilterFactory.hpp"
 
+#ifdef MEASURE_EXECUTION_TIME
+static uint64_t GetCurrentTime()
+{
+    struct timespec tp;
+    memset(&tp, 0, sizeof(tp));
+    clock_gettime(CLOCK_MONOTONIC, &tp);
+    uint64_t time = (uint64_t)tp.tv_sec * (uint64_t)1000000000 + (uint64_t)tp.tv_nsec;
+    return time;
+}
+#endif
+
 using namespace ExifAdapter;
 
 const libecap::size_type MAX_AB_CONTENT_SIZE = 32 * 1024;
@@ -23,6 +38,12 @@ Xaction::Xaction(libecap::host::Xaction *x)
     : hostx(x)
     , vb_offset(0)
     , vb_at_end(false)
+#ifdef MEASURE_EXECUTION_TIME
+    , start_time(0)
+    , first_data_received_time(0)
+    , all_data_received_time(0)
+    , data_processed_time(0)
+#endif
 {
     Log(libecap::flXaction | libecap::ilDebug) << "Xaction";
 }
@@ -58,6 +79,10 @@ void Xaction::start()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "start";
 
+#ifdef MEASURE_EXECUTION_TIME
+    start_time = GetCurrentTime();
+#endif
+
 	Must(hostx);
 
     const std::string content_type = getContentType();
@@ -90,6 +115,18 @@ void Xaction::stop()
 
     content.reset();
     filter.reset();
+
+#ifdef MEASURE_EXECUTION_TIME
+    uint64_t stop_time = GetCurrentTime();
+    uint64_t all_time = stop_time - start_time;
+
+    Log(libecap::flXaction | libecap::ilDebug)
+        << "EXIF-eCAP: Xaction execution time: " << all_time
+        << " first data: " << first_data_received_time - start_time
+        << " all_data: " << all_data_received_time - first_data_received_time
+        << " data_processed_time: " << data_processed_time - all_data_received_time
+        << " send_data: " << stop_time - data_processed_time;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -153,6 +190,10 @@ void Xaction::noteVbContentDone(bool at_end)
     Log(libecap::flXaction | libecap::ilDebug)
         << "noteVbContentDone at_end: " << at_end;
 
+#ifdef MEASURE_EXECUTION_TIME
+    all_data_received_time = GetCurrentTime();
+#endif
+
     vb_at_end = at_end;
 
     Must(hostx);
@@ -178,6 +219,10 @@ void Xaction::noteVbContentDone(bool at_end)
         // so we have to return him unprocessed one
     }
 
+#ifdef MEASURE_EXECUTION_TIME
+    data_processed_time = GetCurrentTime();
+#endif
+
     libecap::shared_ptr<libecap::Message> adapted = hostx->virgin().clone();
     Must(adapted != 0);
 
@@ -199,6 +244,13 @@ void Xaction::noteVbContentDone(bool at_end)
 void Xaction::noteVbContentAvailable()
 {
     Log(libecap::flXaction | libecap::ilDebug) << "noteVbContentAvailable";
+
+#ifdef MEASURE_EXECUTION_TIME
+    if (first_data_received_time == 0)
+    {
+        first_data_received_time = GetCurrentTime();
+    }
+#endif
 
     Must(hostx);
 

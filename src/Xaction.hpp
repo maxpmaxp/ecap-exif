@@ -7,6 +7,8 @@
 #include "ContentIO.hpp"
 #include "MetadataFilter.hpp"
 
+//#define MEASURE_EXECUTION_TIME
+
 namespace ExifAdapter
 {
 
@@ -59,6 +61,13 @@ private:
 
     libecap::shared_ptr<ContentIO> content;
     libecap::shared_ptr<MetadataFilter> filter;
+
+#ifdef MEASURE_EXECUTION_TIME
+    uint64_t start_time;
+    uint64_t first_data_received_time;
+    uint64_t all_data_received_time;
+    uint64_t data_processed_time;
+#endif
 };
 
 }
