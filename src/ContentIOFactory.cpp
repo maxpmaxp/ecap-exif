@@ -1,5 +1,6 @@
 #include "ContentIOFactory.hpp"
 
+#include "Config.hpp"
 #include "ContentFileIO.hpp"
 #include "ContentMemoryIO.hpp"
 #include "Log.hpp"
@@ -8,7 +9,6 @@
 using namespace ExifAdapter;
 
 const char* MULTIPART_FORM_DATA_TYPE = "multipart/form-data";
-const uint64_t MEMORY_STORE_LIMIT = 512 * 1024;
 
 //------------------------------------------------------------------------------
 static libecap::shared_ptr<ContentIO> GetContentIO(
@@ -50,8 +50,11 @@ libecap::shared_ptr<ContentIO> ContentIOFactory::CreateContentIO(
     const std::string& content_type,
     uint64_t content_length)
 {
+    Config* config = Config::GetConfig();
+    uint64_t memory_store_limit = config->GetMemoryFilesizeLimit();
+
     return GetContentIO(
         content_type,
-        content_length <= MEMORY_STORE_LIMIT,
+        content_length <= memory_store_limit,
         content_length);
 }

@@ -4,6 +4,7 @@
 
 #include "autoconf.h"
 
+#include "Config.hpp"
 #include "Log.hpp"
 #include "Xaction.hpp"
 
@@ -28,17 +29,20 @@ void Service::describe(std::ostream &os) const
 }
 
 //------------------------------------------------------------------------------
-void Service::configure(const libecap::Options &)
+void Service::configure(const libecap::Options &options)
 {
-	// this service is not configurable
     Log(libecap::flApplication | libecap::ilDebug) << "configure";
+
+    Config* config = Config::GetConfig();
+    options.visitEachOption(*config);
 }
 
 //------------------------------------------------------------------------------
-void Service::reconfigure(const libecap::Options &)
+void Service::reconfigure(const libecap::Options &options)
 {
-	// this service is not configurable
     Log(libecap::flApplication | libecap::ilDebug) << "reconfigure";
+    Config* config = Config::GetConfig();
+    options.visitEachOption(*config);
 }
 
 //------------------------------------------------------------------------------

@@ -10,31 +10,29 @@
 
 #include <libecap/common/errors.h>
 
+#include "Config.hpp"
 #include "Log.hpp"
 #include "MemoryAreaDetails.hpp"
 
 using namespace ExifAdapter;
 
-// FIXME: should be configurable
-const char* TEMPORARY_FILENAME_FORMAT = "/tmp/exif-ecap-XXXXXX";
-
 //------------------------------------------------------------------------------
 libecap::shared_ptr<ContentFileIO> ContentFileIO::FromTemporaryFile()
 {
-    // FIXME: correctly determine length of format
-    const int filename_length = 32;
+    Config* config = Config::GetConfig();
+    std::string tmp_filename_format = config->GetTemporaryFilenameFormat();
+    unsigned filename_length = tmp_filename_format.size();
     char temporary_filename[filename_length];
     memset(temporary_filename, 0, filename_length);
-    strncpy(temporary_filename, TEMPORARY_FILENAME_FORMAT, filename_length);
+    strncpy(temporary_filename, tmp_filename_format.c_str(), filename_length);
 
     int result = mkstemp(temporary_filename);
     if (result == -1)
     {
-         Log(libecap::flXaction | libecap::ilDebug)
-             << "failed to create temporary file with format "
-             << temporary_filename
-             << ": " << strerror(errno);
-        return libecap::shared_ptr<ContentFileIO>();
+        std::string msg = "failed to create temporary file with format " +
+            tmp_filename_format + ": " + strerror(errno);
+         Log(libecap::flXaction | libecap::ilCritical) << msg;
+         throw libecap::TextException(msg);
     }
 
     return libecap::shared_ptr<ContentFileIO>(

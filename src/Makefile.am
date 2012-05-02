@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	Adapter.cpp \
+	Config.cpp \
 	ContentFileIO.cpp \
 	ContentIOFactory.cpp \
 	ContentMemoryIO.hpp \
@@ -15,6 +16,7 @@ lib_LTLIBRARIES = \
 	ecap_adapter_exif.la
 
 noinst_HEADERS = \
+	Config.hpp \
 	ContentFileIO.hpp \
 	ContentIO.hpp \
 	ContentIOFactory.hpp \
@@ -32,6 +34,7 @@ noinst_HEADERS = \
 
 ecap_adapter_exif_la_SOURCES = \
 	Adapter.cpp \
+	Config.cpp \
 	ContentFileIO.cpp \
 	ContentIOFactory.cpp \
 	ContentMemoryIO.cpp \
