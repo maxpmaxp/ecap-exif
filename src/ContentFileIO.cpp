@@ -116,6 +116,11 @@ libecap::Area ContentFileIO::Read(
 //------------------------------------------------------------------------------
 void ContentFileIO::ApplyFilter(libecap::shared_ptr<MetadataFilter> filter)
 {
+    if (!filter)
+    {
+        return;
+    }
+
     CloseFile();
 
     filter->ProcessFile(filename);

@@ -18,6 +18,7 @@ ContentMemoryIO::ContentMemoryIO(libecap::size_type expected_size)
     {
         throw std::runtime_error("Failed to allocate memory");
     }
+    std::memset(buffer, 0, expected_size);
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +91,11 @@ libecap::Area ContentMemoryIO::Read(
 void ContentMemoryIO::ApplyFilter(
     libecap::shared_ptr<MetadataFilter> filter)
 {
+    if (!filter)
+    {
+        return;
+    }
+
     int size = this->size; // because of data type
     filter->ProcessMemory(&buffer, &size);
     this->size = size;

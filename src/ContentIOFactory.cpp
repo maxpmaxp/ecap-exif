@@ -3,6 +3,7 @@
 #include "ContentFileIO.hpp"
 #include "ContentMemoryIO.hpp"
 #include "Log.hpp"
+#include "MultipartContentIO.hpp"
 
 using namespace ExifAdapter;
 
@@ -17,12 +18,12 @@ static libecap::shared_ptr<ContentIO> GetContentIO(
 {
     libecap::shared_ptr<ContentIO> content_io;
 
-    // if (content_type.find(MULTIPART_FORM_DATA_TYPE) == 0)
-    // {
-    //     content_io.reset(
-    //         new MultipartContentIO(content_type));
-    // }
-    // else
+    if (content_type.find(MULTIPART_FORM_DATA_TYPE) == 0)
+    {
+        content_io.reset(
+            new MultipartContentIO(content_type, length));
+    }
+    else
     if (store_in_memory)
     {
         Log(libecap::flXaction | libecap::ilDebug) << "store in memory";

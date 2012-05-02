@@ -11,8 +11,8 @@
 #include <libecap/host/xaction.h>
 
 #include "ContentIOFactory.hpp"
-#include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
+#include "MetadataFilterFactory.hpp"
 
 using namespace ExifAdapter;
 
@@ -60,9 +60,9 @@ void Xaction::start()
 
 	Must(hostx);
 
-    filter.reset(new ExivMetadataFilter());
-
     const std::string content_type = getContentType();
+
+    filter = MetadataFilterFactory::CreateFilter(content_type);
 
     if (!shouldProcess(content_type))
     {
@@ -247,7 +247,7 @@ bool Xaction::shouldProcess(const std::string& content_type) const
         return false;
     }
 
-    if (!filter->IsMimeTypeSupported(content_type))
+    if (!MetadataFilterFactory::IsMimeTypeSupported(content_type))
     {
         Log(libecap::flXaction | libecap::ilDebug)
             << "content type " << content_type
