@@ -26,6 +26,7 @@ private:
     uint8_t* buffer;
     libecap::size_type size;
     libecap::size_type offset;
+    libecap::size_type written;
 };
 
 }
