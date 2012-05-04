@@ -88,6 +88,11 @@ void Xaction::start()
     const std::string content_type = getContentType();
 
     filter = MetadataFilterFactory::CreateFilter(content_type);
+    if (!filter)
+    {
+        Log(libecap::flXaction | libecap::ilDebug)
+            << "can't create filter for type " << content_type;
+    }
 
     if (!shouldProcess(content_type))
     {

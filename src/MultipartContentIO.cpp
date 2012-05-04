@@ -317,6 +317,11 @@ void MultipartContentIO::ParseHeaders(
     std::string content_type = GetContentTypeFromHeaders(headers);
     libecap::shared_ptr<MetadataFilter> filter =
         MetadataFilterFactory::CreateFilter(content_type);
+    if (!filter)
+    {
+        Log(libecap::flXaction | libecap::ilDebug)
+            << "can't create filter for type " << content_type;
+    }
     fields.push_back(
         libecap::shared_ptr<FormData>(
             new FormData(
