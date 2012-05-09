@@ -1,6 +1,7 @@
 #include "MetadataFilterFactory.hpp"
 
 #include "ExivMetadataFilter.hpp"
+#include "Log.hpp"
 #include "RuntimeMetadataFilter.hpp"
 
 using namespace ExifAdapter;
@@ -11,7 +12,7 @@ libecap::shared_ptr<MetadataFilter> MetadataFilterFactory::CreateFilter(
 {
     if (mime_type.find("application/octet-stream") == 0)
     {
-        Log(flXaction | ilDebug)
+        Log(libecap::flXaction | libecap::ilDebug)
             << "creating runtime metadata filter for "
             << "application/octet-stream mime type";
         libecap::shared_ptr<MetadataFilter> filter(

@@ -1,6 +1,7 @@
 #include "RuntimeMetadataFilter.hpp"
 
 #include "ExivMetadataFilter.hpp"
+#include "Log.hpp"
 
 using namespace ExifAdapter;
 
@@ -32,7 +33,7 @@ void RuntimeMetadataFilter::ProcessFile(const std::string& path)
         }
     }
 
-    Log(flXaction | ilDebug)
+    Log(libecap::flXaction | libecap::ilDebug)
         << "no filter found";
 }
 
@@ -54,7 +55,7 @@ void RuntimeMetadataFilter::ProcessMemory(
         }
     }
 
-    Log(flXaction | ilDebug)
+    Log(libecap::flXaction | libecap::ilDebug)
         << "no filter found";
 }
 
