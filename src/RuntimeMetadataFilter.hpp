@@ -1,17 +1,21 @@
-#ifndef __EXIV_METADATA_FILTER_HPP__
-#define __EXIV_METADATA_FILTER_HPP__
+#ifndef __RUNTIME_METADATA_FILTER_HPP__
+#define __RUNTIME_METADATA_FILTER_HPP__
+
+#include <list>
+
+#include <libecap/common/memory.h>
 
 #include "MetadataFilter.hpp"
 
 namespace ExifAdapter
 {
 
-class ExivMetadataFilter
+class RuntimeMetadataFilter
     : public MetadataFilter
 {
 public:
-    ExivMetadataFilter();
-    ~ExivMetadataFilter();
+    RuntimeMetadataFilter();
+    ~RuntimeMetadataFilter();
 
     void ProcessFile(const std::string& path);
 
@@ -25,6 +29,9 @@ public:
     bool CanProcess(
         uint8_t* buffer,
         int size) const;
+
+private:
+    std::list<libecap::shared_ptr<MetadataFilter> > filters;
 };
 
 }

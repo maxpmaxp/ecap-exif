@@ -40,7 +40,12 @@ public:
         uint8_t** buffer,
         int* size) = 0;
 
-    virtual bool IsMimeTypeSupported(const std::string& mime_type) = 0;
+    virtual bool IsMimeTypeSupported(const std::string& mime_type) const = 0;
+
+    virtual bool CanProcess(const std::string& path) const = 0;
+    virtual bool CanProcess(
+        uint8_t* buffer,
+        int size) const = 0;
 };
 
 }

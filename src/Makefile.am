@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
 	MultipartContentIO.cpp \
+	RuntimeMetadataFilter.cpp \
 	Service.cpp \
 	Xaction.cpp
 
@@ -27,6 +28,7 @@ noinst_HEADERS = \
 	MetadataFilter.hpp \
 	MetadataFilterFactory.hpp \
 	MultipartContentIO.hpp \
+	RuntimeMetadataFilter.hpp \
 	Service.hpp \
 	Xaction.hpp \
 	\
@@ -42,6 +44,7 @@ ecap_adapter_exif_la_SOURCES = \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
 	MultipartContentIO.cpp \
+	RuntimeMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \
 	Xaction.cpp

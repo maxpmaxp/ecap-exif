@@ -88,7 +88,7 @@ void ExivMetadataFilter::ProcessMemory(
 
 //------------------------------------------------------------------------------
 bool ExivMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type)
+    const std::string& mime_type) const
 {
     for (int i = 0; mime_types[i] != NULL; ++i)
     {
@@ -98,4 +98,29 @@ bool ExivMetadataFilter::IsMimeTypeSupported(
         }
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+bool ExivMetadataFilter::CanProcess(const std::string& path) const
+{
+    if (Exiv2::ImageFactory::getType(path) == Exiv2::ImageType::none)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+bool ExivMetadataFilter::CanProcess(
+    uint8_t* buffer,
+    int size) const
+{
+    if (Exiv2::ImageFactory::getType(buffer, size) ==
+        Exiv2::ImageType::none)
+    {
+        return false;
+    }
+
+    return true;
 }
