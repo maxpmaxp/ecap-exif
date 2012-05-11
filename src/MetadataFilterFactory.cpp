@@ -2,6 +2,7 @@
 
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
+#include "Mp4MetadataFilter.hpp"
 #include "RuntimeMetadataFilter.hpp"
 
 using namespace ExifAdapter;
@@ -25,6 +26,13 @@ libecap::shared_ptr<MetadataFilter> MetadataFilterFactory::CreateFilter(
     {
         return filter;
     }
+
+    libecap::shared_ptr<MetadataFilter> mp4filter(new Mp4MetadataFilter());
+    if (mp4filter->IsMimeTypeSupported(mime_type))
+    {
+        return mp4filter;
+    }
+
     return libecap::shared_ptr<MetadataFilter>();
 }
 
@@ -42,5 +50,16 @@ bool MetadataFilterFactory::IsMimeTypeSupported(
     }
 
     libecap::shared_ptr<MetadataFilter> filter(new ExivMetadataFilter());
-    return filter->IsMimeTypeSupported(mime_type);
+    if (filter->IsMimeTypeSupported(mime_type))
+    {
+        return true;
+    }
+
+    libecap::shared_ptr<MetadataFilter> mp4filter(new Mp4MetadataFilter());
+    if (mp4filter->IsMimeTypeSupported(mime_type))
+    {
+        return true;
+    }
+
+    return false;
 }

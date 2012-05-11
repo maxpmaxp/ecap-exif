@@ -2,6 +2,7 @@
 
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
+#include "Mp4MetadataFilter.hpp"
 
 using namespace ExifAdapter;
 
@@ -10,6 +11,8 @@ RuntimeMetadataFilter::RuntimeMetadataFilter()
 {
     filters.push_back(libecap::shared_ptr<MetadataFilter>(
                           new ExivMetadataFilter()));
+    filters.push_back(libecap::shared_ptr<MetadataFilter>(
+                          new Mp4MetadataFilter()));
 }
 
 //------------------------------------------------------------------------------

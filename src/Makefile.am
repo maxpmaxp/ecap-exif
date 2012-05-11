@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	Log.cpp \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
+	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	RuntimeMetadataFilter.cpp \
 	Service.cpp \
@@ -27,6 +28,7 @@ noinst_HEADERS = \
 	MemoryAreaDetails.hpp \
 	MetadataFilter.hpp \
 	MetadataFilterFactory.hpp \
+	Mp4MetadataFilter.hpp \
 	MultipartContentIO.hpp \
 	RuntimeMetadataFilter.hpp \
 	Service.hpp \
@@ -43,6 +45,7 @@ ecap_adapter_exif_la_SOURCES = \
 	ExivMetadataFilter.cpp \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
+	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	RuntimeMetadataFilter.cpp \
 	Log.cpp \
