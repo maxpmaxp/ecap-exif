@@ -129,7 +129,15 @@ void ContentFileIO::ApplyFilter(libecap::shared_ptr<MetadataFilter> filter)
 
     CloseFile();
 
-    filter->ProcessFile(filename);
+    try
+    {
+        filter->ProcessFile(filename);
+    }
+    catch (MetadataFilter::Exception& e)
+    {
+        OpenFile();
+        throw e;
+    }
 
     OpenFile();
 }
