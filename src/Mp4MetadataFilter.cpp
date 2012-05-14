@@ -33,6 +33,8 @@ using namespace ExifAdapter;
 //------------------------------------------------------------------------------
 Mp4MetadataFilter::Mp4MetadataFilter()
 {
+    Log(libecap::flXaction | libecap::ilDebug) <<
+        "registered mp4 metadata filter";
 }
 
 //------------------------------------------------------------------------------

@@ -29,9 +29,6 @@ public:
     bool CanProcess(
         uint8_t* buffer,
         int size) const;
-
-private:
-    std::list<libecap::shared_ptr<MetadataFilter> > filters;
 };
 
 }

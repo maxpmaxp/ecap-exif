@@ -5,6 +5,42 @@
 #include "Mp4MetadataFilter.hpp"
 #include "RuntimeMetadataFilter.hpp"
 
+class FilterRegistry
+{
+public:
+    void RegisterFilter(
+        libecap::shared_ptr<ExifAdapter::MetadataFilter> filter)
+        {
+            filters.push_back(filter);
+        }
+
+    const ExifAdapter::MetadataFilterFactory::MetadataFilterList& GetFilters()
+        {
+            return filters;
+        }
+
+private:
+    ExifAdapter::MetadataFilterFactory::MetadataFilterList filters;
+};
+
+static FilterRegistry* filter_registry = NULL;
+
+static FilterRegistry* GetFilterRegistry()
+{
+    if (filter_registry == NULL)
+    {
+        filter_registry = new FilterRegistry();
+        filter_registry->RegisterFilter(
+            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
+                new ExifAdapter::ExivMetadataFilter()));
+        filter_registry->RegisterFilter(
+            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
+                new ExifAdapter::Mp4MetadataFilter()));
+    }
+
+    return filter_registry;
+}
+
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
@@ -21,16 +57,16 @@ libecap::shared_ptr<MetadataFilter> MetadataFilterFactory::CreateFilter(
         return filter;
     }
 
-    libecap::shared_ptr<MetadataFilter> filter(new ExivMetadataFilter());
-    if (filter->IsMimeTypeSupported(mime_type))
+    const MetadataFilterList& filters = GetFilterRegistry()->GetFilters();
+    for (MetadataFilterList::const_iterator it = filters.begin();
+         it != filters.end();
+         ++it)
     {
-        return filter;
-    }
-
-    libecap::shared_ptr<MetadataFilter> mp4filter(new Mp4MetadataFilter());
-    if (mp4filter->IsMimeTypeSupported(mime_type))
-    {
-        return mp4filter;
+        libecap::shared_ptr<MetadataFilter> filter = *it;
+        if (filter->IsMimeTypeSupported(mime_type))
+        {
+            return filter;
+        }
     }
 
     return libecap::shared_ptr<MetadataFilter>();
@@ -49,17 +85,23 @@ bool MetadataFilterFactory::IsMimeTypeSupported(
         return true;
     }
 
-    libecap::shared_ptr<MetadataFilter> filter(new ExivMetadataFilter());
-    if (filter->IsMimeTypeSupported(mime_type))
+    const MetadataFilterList& filters = GetFilterRegistry()->GetFilters();
+    for (MetadataFilterList::const_iterator it = filters.begin();
+         it != filters.end();
+         ++it)
     {
-        return true;
-    }
-
-    libecap::shared_ptr<MetadataFilter> mp4filter(new Mp4MetadataFilter());
-    if (mp4filter->IsMimeTypeSupported(mime_type))
-    {
-        return true;
+        libecap::shared_ptr<MetadataFilter> filter = *it;
+        if (filter->IsMimeTypeSupported(mime_type))
+        {
+            return true;
+        }
     }
 
     return false;
+}
+
+//------------------------------------------------------------------------------
+const MetadataFilterFactory::MetadataFilterList& MetadataFilterFactory::GetFilters()
+{
+    return GetFilterRegistry()->GetFilters();
 }

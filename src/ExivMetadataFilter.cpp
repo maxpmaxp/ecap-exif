@@ -3,6 +3,8 @@
 #include <exiv2/error.hpp>
 #include <exiv2/image.hpp>
 
+#include "Log.hpp"
+
 using namespace ExifAdapter;
 
 // http://dev.exiv2.org/projects/exiv2/wiki/Supported_image_formats
@@ -28,6 +30,8 @@ static const char* mime_types[] = {
 //------------------------------------------------------------------------------
 ExivMetadataFilter::ExivMetadataFilter()
 {
+    Log(libecap::flXaction | libecap::ilDebug) <<
+        "registered exiv metadata filter";
 }
 
 //------------------------------------------------------------------------------

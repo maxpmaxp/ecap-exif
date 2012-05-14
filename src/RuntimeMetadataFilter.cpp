@@ -1,18 +1,13 @@
 #include "RuntimeMetadataFilter.hpp"
 
-#include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
-#include "Mp4MetadataFilter.hpp"
+#include "MetadataFilterFactory.hpp"
 
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
 RuntimeMetadataFilter::RuntimeMetadataFilter()
 {
-    filters.push_back(libecap::shared_ptr<MetadataFilter>(
-                          new ExivMetadataFilter()));
-    filters.push_back(libecap::shared_ptr<MetadataFilter>(
-                          new Mp4MetadataFilter()));
 }
 
 //------------------------------------------------------------------------------
@@ -23,7 +18,10 @@ RuntimeMetadataFilter::~RuntimeMetadataFilter()
 //------------------------------------------------------------------------------
 void RuntimeMetadataFilter::ProcessFile(const std::string& path)
 {
-    for (std::list<libecap::shared_ptr<MetadataFilter> >::const_iterator it =
+    const MetadataFilterFactory::MetadataFilterList& filters =
+        MetadataFilterFactory::GetFilters();
+
+    for (MetadataFilterFactory::MetadataFilterList::const_iterator it =
              filters.begin();
          it != filters.end();
          ++it)
@@ -45,7 +43,10 @@ void RuntimeMetadataFilter::ProcessMemory(
     uint8_t** buffer,
     int* size)
 {
-    for (std::list<libecap::shared_ptr<MetadataFilter> >::const_iterator it =
+    const MetadataFilterFactory::MetadataFilterList& filters =
+        MetadataFilterFactory::GetFilters();
+
+    for (MetadataFilterFactory::MetadataFilterList::const_iterator it =
              filters.begin();
          it != filters.end();
          ++it)
@@ -65,7 +66,10 @@ void RuntimeMetadataFilter::ProcessMemory(
 //------------------------------------------------------------------------------
 bool RuntimeMetadataFilter::IsMimeTypeSupported(const std::string& mime_type) const
 {
-    for (std::list<libecap::shared_ptr<MetadataFilter> >::const_iterator it =
+    const MetadataFilterFactory::MetadataFilterList& filters =
+        MetadataFilterFactory::GetFilters();
+
+    for (MetadataFilterFactory::MetadataFilterList::const_iterator it =
              filters.begin();
          it != filters.end();
          ++it)
@@ -83,7 +87,10 @@ bool RuntimeMetadataFilter::IsMimeTypeSupported(const std::string& mime_type) co
 //------------------------------------------------------------------------------
 bool RuntimeMetadataFilter::CanProcess(const std::string& path) const
 {
-    for (std::list<libecap::shared_ptr<MetadataFilter> >::const_iterator it =
+    const MetadataFilterFactory::MetadataFilterList& filters =
+        MetadataFilterFactory::GetFilters();
+
+    for (MetadataFilterFactory::MetadataFilterList::const_iterator it =
              filters.begin();
          it != filters.end();
          ++it)
@@ -103,7 +110,10 @@ bool RuntimeMetadataFilter::CanProcess(
     uint8_t* buffer,
     int size) const
 {
-    for (std::list<libecap::shared_ptr<MetadataFilter> >::const_iterator it =
+    const MetadataFilterFactory::MetadataFilterList& filters =
+        MetadataFilterFactory::GetFilters();
+
+    for (MetadataFilterFactory::MetadataFilterList::const_iterator it =
              filters.begin();
          it != filters.end();
          ++it)
