@@ -1,6 +1,5 @@
 #include "Mp4MetadataFilter.hpp"
 
-#include <iostream>
 #include <fstream>
 
 #include <errno.h>
@@ -8,6 +7,8 @@
 #include <cstring>
 #include <sys/mman.h>
 #include <sys/stat.h>
+
+#include "Log.hpp"
 
 static const char* mime_types[] = {
     "audio/3gpp",
@@ -214,14 +215,16 @@ bool Mp4MetadataFilter::CanProcess(const std::string& path) const
     std::ifstream file(path.c_str());
     if (!file.is_open())
     {
-        std::cout << "can't open mp4 file" << std::endl;
+        Log(libecap::flXaction | libecap::ilNormal)
+            << "can't open mp4 file";
         return false;
     }
 
     file.seekg(4);
     if (!file.good())
     {
-        std::cout << "can't seek mp4 file" << std::endl;
+        Log(libecap::flXaction | libecap::ilNormal)
+            << "can't seek mp4 file";
         return false;
     }
 
@@ -229,7 +232,8 @@ bool Mp4MetadataFilter::CanProcess(const std::string& path) const
     file.read(atom, 8);
     if (file.gcount() != 8)
     {
-        std::cout << "can't read mp4 file" << std::endl;
+        Log(libecap::flXaction | libecap::ilNormal)
+            << "can't read mp4 file";
         return false;
     }
 
@@ -257,7 +261,7 @@ bool Mp4MetadataFilter::IsFtypSupported(const char* atom) const
         atom[2] != 'y' ||
         atom[3] != 'p')
     {
-        std::cout << "no ftyp" << std::endl;
+        Log(libecap::flXaction | libecap::ilDebug) << "no ftyp";
         return false;
     }
 
@@ -289,8 +293,6 @@ bool Mp4MetadataFilter::IsFtypSupported(const char* atom) const
     {
         return true;
     }
-
-    std::cout << atom_type[0] << atom_type[1] << atom_type[2] << atom_type[3] << std::endl;
 
     return false;
 }
