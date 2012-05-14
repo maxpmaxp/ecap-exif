@@ -10,7 +10,13 @@
 #include <sys/stat.h>
 
 static const char* mime_types[] = {
+    "audio/3gpp",
+    "audio/3gpp2",
     "video/3gpp",
+    "video/3gpp2",
+    "audio/mp4",
+    "audio/mp4a-latm",
+    "audio/x-m4a",
     "video/mp4",
     "video/quicktime",
     NULL,
@@ -273,6 +279,13 @@ bool Mp4MetadataFilter::IsFtypSupported(const char* atom) const
     if (atom_type[0] == 'i' &&
         atom_type[1] == 's' &&
         atom_type[2] == 'o')
+    {
+        return true;
+    }
+
+    if (atom_type[0] == 'M' &&
+        atom_type[1] == '4' &&
+        atom_type[2] == 'A')
     {
         return true;
     }
