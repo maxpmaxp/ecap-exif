@@ -46,6 +46,8 @@ public:
     virtual bool CanProcess(
         uint8_t* buffer,
         int size) const = 0;
+
+    virtual bool SupportsInMemoryProcessing() const = 0;
 };
 
 }

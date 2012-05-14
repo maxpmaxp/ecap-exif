@@ -328,7 +328,8 @@ void MultipartContentIO::ParseHeaders(
                 headers,
                 ContentIOFactory::CreateContentIO(
                     content_type,
-                    content_length),
+                    content_length,
+                    filter->SupportsInMemoryProcessing()),
                 filter)));
 }
 

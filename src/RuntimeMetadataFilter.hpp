@@ -29,6 +29,8 @@ public:
     bool CanProcess(
         uint8_t* buffer,
         int size) const;
+
+    bool SupportsInMemoryProcessing() const;
 };
 
 }

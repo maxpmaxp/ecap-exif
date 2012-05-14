@@ -128,3 +128,9 @@ bool ExivMetadataFilter::CanProcess(
 
     return true;
 }
+
+//------------------------------------------------------------------------------
+bool ExivMetadataFilter::SupportsInMemoryProcessing() const
+{
+    return true;
+}

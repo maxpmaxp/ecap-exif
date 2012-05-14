@@ -48,13 +48,22 @@ libecap::shared_ptr<ContentIO> ContentIOFactory::CreateContentIO(
 //------------------------------------------------------------------------------
 libecap::shared_ptr<ContentIO> ContentIOFactory::CreateContentIO(
     const std::string& content_type,
-    uint64_t content_length)
+    uint64_t content_length,
+    bool can_be_stored_in_memory)
 {
     Config* config = Config::GetConfig();
     uint64_t memory_store_limit = config->GetMemoryFilesizeLimit();
 
+    if (can_be_stored_in_memory)
+    {
+        if (content_length > memory_store_limit)
+        {
+            can_be_stored_in_memory = false;
+        }
+    }
+
     return GetContentIO(
         content_type,
-        content_length <= memory_store_limit,
+        can_be_stored_in_memory,
         content_length);
 }

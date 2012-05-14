@@ -17,7 +17,8 @@ public:
         const std::string& content_type);
     static libecap::shared_ptr<ContentIO> CreateContentIO(
         const std::string& content_type,
-        uint64_t content_length);
+        uint64_t content_length,
+        bool can_be_stored_in_memory);
 };
 
 }

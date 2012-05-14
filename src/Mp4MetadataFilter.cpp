@@ -350,3 +350,9 @@ void Mp4MetadataFilter::ProcessMoov(
         position += atom_size;
     }
 }
+
+//------------------------------------------------------------------------------
+bool Mp4MetadataFilter::SupportsInMemoryProcessing() const
+{
+    return true;
+}

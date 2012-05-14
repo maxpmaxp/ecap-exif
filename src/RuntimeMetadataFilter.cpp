@@ -127,3 +127,10 @@ bool RuntimeMetadataFilter::CanProcess(
 
     return false;
 }
+
+//------------------------------------------------------------------------------
+bool RuntimeMetadataFilter::SupportsInMemoryProcessing() const
+{
+    // not all filters can support in-memory processing
+    return false;
+}

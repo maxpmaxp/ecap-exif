@@ -26,6 +26,8 @@ public:
         uint8_t* buffer,
         int size) const;
 
+    bool SupportsInMemoryProcessing() const;
+
 private:
     bool IsFtypSupported(const char* atom) const;
     void ProcessMoov(
