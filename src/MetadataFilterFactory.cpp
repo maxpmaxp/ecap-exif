@@ -2,6 +2,7 @@
 
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
+#include "Mp3MetadataFilter.hpp"
 #include "Mp4MetadataFilter.hpp"
 #include "RuntimeMetadataFilter.hpp"
 
@@ -36,6 +37,9 @@ static FilterRegistry* GetFilterRegistry()
         filter_registry->RegisterFilter(
             libecap::shared_ptr<ExifAdapter::MetadataFilter>(
                 new ExifAdapter::Mp4MetadataFilter()));
+        filter_registry->RegisterFilter(
+            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
+                new ExifAdapter::Mp3MetadataFilter()));
     }
 
     return filter_registry;

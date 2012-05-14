@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	Log.cpp \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
+	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	RuntimeMetadataFilter.cpp \
@@ -28,6 +29,7 @@ noinst_HEADERS = \
 	MemoryAreaDetails.hpp \
 	MetadataFilter.hpp \
 	MetadataFilterFactory.hpp \
+	Mp3MetadataFilter.hpp \
 	Mp4MetadataFilter.hpp \
 	MultipartContentIO.hpp \
 	RuntimeMetadataFilter.hpp \
@@ -45,15 +47,16 @@ ecap_adapter_exif_la_SOURCES = \
 	ExivMetadataFilter.cpp \
 	MemoryAreaDetails.cpp \
 	MetadataFilterFactory.cpp \
+	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	RuntimeMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \
 	Xaction.cpp
-ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS) $(libexiv2_LIBS)
+ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS) $(libexiv2_LIBS) $(taglib_LIBS)
 
 DISTCLEANFILES = \
         autoconf.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS) -Wall -Wextra
+AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS) $(taglib_CFLAGS) -Wall -Wextra
