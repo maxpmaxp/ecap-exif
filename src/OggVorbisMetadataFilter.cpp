@@ -100,20 +100,17 @@ bool OggVorbisMetadataFilter::CanProcess(const std::string& path) const
     TagLib::Ogg::Vorbis::File file(path.c_str());
     if (!file.isValid())
     {
-        std::cout << "not valid" << std::endl;
         return false;
     }
 
     TagLib::Ogg::XiphComment *tag = file.tag();
     if (!tag)
     {
-        std::cout << "no tag" << std::endl;
         return false;
     }
 
     if (tag->isEmpty())
     {
-        std::cout << "empty tag" << std::endl;
         return false;
     }
 
