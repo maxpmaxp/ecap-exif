@@ -4,6 +4,7 @@
 #include "Log.hpp"
 #include "Mp3MetadataFilter.hpp"
 #include "Mp4MetadataFilter.hpp"
+#include "OggVorbisMetadataFilter.hpp"
 #include "RuntimeMetadataFilter.hpp"
 
 class FilterRegistry
@@ -31,15 +32,16 @@ static FilterRegistry* GetFilterRegistry()
     if (filter_registry == NULL)
     {
         filter_registry = new FilterRegistry();
-        filter_registry->RegisterFilter(
-            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
-                new ExifAdapter::ExivMetadataFilter()));
-        filter_registry->RegisterFilter(
-            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
-                new ExifAdapter::Mp4MetadataFilter()));
-        filter_registry->RegisterFilter(
-            libecap::shared_ptr<ExifAdapter::MetadataFilter>(
-                new ExifAdapter::Mp3MetadataFilter()));
+
+#define REGISTER_FILTER(filter)                               \
+        filter_registry->RegisterFilter(                      \
+            libecap::shared_ptr<ExifAdapter::MetadataFilter>( \
+                new filter()));
+
+        REGISTER_FILTER(ExifAdapter::ExivMetadataFilter);
+        REGISTER_FILTER(ExifAdapter::Mp4MetadataFilter);
+        REGISTER_FILTER(ExifAdapter::Mp3MetadataFilter);
+        REGISTER_FILTER(ExifAdapter::OggVorbisMetadataFilter);
     }
 
     return filter_registry;
