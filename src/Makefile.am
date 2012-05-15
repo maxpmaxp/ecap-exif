@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	OggVorbisMetadataFilter.cpp \
+	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
 	Service.cpp \
 	Xaction.cpp
@@ -34,6 +35,7 @@ noinst_HEADERS = \
 	Mp4MetadataFilter.hpp \
 	MultipartContentIO.hpp \
 	OggVorbisMetadataFilter.hpp \
+	PdfMetadataFilter.hpp \
 	RuntimeMetadataFilter.hpp \
 	Service.hpp \
 	Xaction.hpp \
@@ -53,6 +55,7 @@ ecap_adapter_exif_la_SOURCES = \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
 	OggVorbisMetadataFilter.cpp \
+	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \

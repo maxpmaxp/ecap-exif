@@ -34,6 +34,8 @@ PKG_CHECK_MODULES(libecap, [libecap > 0.2 libecap < 0.3])
 PKG_CHECK_MODULES(libexiv2, [exiv2])
 PKG_CHECK_MODULES(taglib, [taglib])
 
+AX_CXX_CHECK_LIB(podofo, [PoDoFo::PdfDocument])
+
 # Checks for typedefs, structures, and compiler characteristics.
 # AC_HEADER_STDBOOL
 # AC_C_CONST
