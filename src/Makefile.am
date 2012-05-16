@@ -11,6 +11,7 @@ EXTRA_DIST = \
 	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
+	OdfMetadataFilter.cpp \
 	OggVorbisMetadataFilter.cpp \
 	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
@@ -34,6 +35,7 @@ noinst_HEADERS = \
 	Mp3MetadataFilter.hpp \
 	Mp4MetadataFilter.hpp \
 	MultipartContentIO.hpp \
+	OdfMetadataFilter.hpp \
 	OggVorbisMetadataFilter.hpp \
 	PdfMetadataFilter.hpp \
 	RuntimeMetadataFilter.hpp \
@@ -54,15 +56,16 @@ ecap_adapter_exif_la_SOURCES = \
 	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \
 	MultipartContentIO.cpp \
+	OdfMetadataFilter.cpp \
 	OggVorbisMetadataFilter.cpp \
 	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
 	Log.cpp \
 	Service.cpp \
 	Xaction.cpp
-ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS) $(libexiv2_LIBS) $(taglib_LIBS)
+ecap_adapter_exif_la_LDFLAGS = -module -avoid-version $(libecap_LIBS) $(libexiv2_LIBS) $(taglib_LIBS) $(libzip_LIBS)
 
 DISTCLEANFILES = \
         autoconf.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS) $(taglib_CFLAGS) -Wall -Wextra
+AM_CPPFLAGS = -I$(top_srcdir)/src $(libecap_CFLAGS) $(libecap_CFLAGS) $(taglib_CFLAGS) $(libzip_CFLAGS) -Wall -Wextra

@@ -4,6 +4,7 @@
 #include "Log.hpp"
 #include "Mp3MetadataFilter.hpp"
 #include "Mp4MetadataFilter.hpp"
+#include "OdfMetadataFilter.hpp"
 #include "OggVorbisMetadataFilter.hpp"
 #include "PdfMetadataFilter.hpp"
 #include "RuntimeMetadataFilter.hpp"
@@ -44,6 +45,7 @@ static FilterRegistry* GetFilterRegistry()
         REGISTER_FILTER(ExifAdapter::Mp3MetadataFilter);
         REGISTER_FILTER(ExifAdapter::OggVorbisMetadataFilter);
         REGISTER_FILTER(ExifAdapter::PdfMetadataFilter);
+        REGISTER_FILTER(ExifAdapter::OdfMetadataFilter);
     }
 
     return filter_registry;
