@@ -13,6 +13,7 @@ EXTRA_DIST = \
 	MultipartContentIO.cpp \
 	OdfMetadataFilter.cpp \
 	OggVorbisMetadataFilter.cpp \
+	OpenXmlMetadataFilter.cpp \
 	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
 	Service.cpp \
@@ -37,6 +38,7 @@ noinst_HEADERS = \
 	MultipartContentIO.hpp \
 	OdfMetadataFilter.hpp \
 	OggVorbisMetadataFilter.hpp \
+	OpenXmlMetadataFilter.hpp \
 	PdfMetadataFilter.hpp \
 	RuntimeMetadataFilter.hpp \
 	Service.hpp \
@@ -58,6 +60,7 @@ ecap_adapter_exif_la_SOURCES = \
 	MultipartContentIO.cpp \
 	OdfMetadataFilter.cpp \
 	OggVorbisMetadataFilter.cpp \
+	OpenXmlMetadataFilter.cpp \
 	PdfMetadataFilter.cpp \
 	RuntimeMetadataFilter.cpp \
 	Log.cpp \
