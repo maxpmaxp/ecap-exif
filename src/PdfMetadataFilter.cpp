@@ -1,5 +1,7 @@
 #include "PdfMetadataFilter.hpp"
 
+#include <cstdlib>
+
 #include <errno.h>
 
 #include <podofo/podofo.h>
