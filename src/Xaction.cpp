@@ -332,10 +332,13 @@ void Xaction::createAdaptedContentIo(const std::string& content_type)
 
     if (length_found)
     {
-        Must(filter);
+        bool can_be_stored_in_memory = true;
 
-        bool can_be_stored_in_memory =
-            filter->SupportsInMemoryProcessing();
+        if (filter)
+        {
+            can_be_stored_in_memory =
+                filter->SupportsInMemoryProcessing();
+        }
 
         content = ContentIOFactory::CreateContentIO(
             content_type,

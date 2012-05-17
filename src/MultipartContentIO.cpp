@@ -315,9 +315,16 @@ void MultipartContentIO::ParseHeaders(
 {
     std::string headers(data, size);
     std::string content_type = GetContentTypeFromHeaders(headers);
+
     libecap::shared_ptr<MetadataFilter> filter =
         MetadataFilterFactory::CreateFilter(content_type);
-    if (!filter)
+    bool can_be_stored_in_memory = true;
+
+    if (filter)
+    {
+        can_be_stored_in_memory = filter->SupportsInMemoryProcessing();
+    }
+    else
     {
         Log(libecap::flXaction | libecap::ilDebug)
             << "can't create filter for type " << content_type;
@@ -329,7 +336,7 @@ void MultipartContentIO::ParseHeaders(
                 ContentIOFactory::CreateContentIO(
                     content_type,
                     content_length,
-                    filter->SupportsInMemoryProcessing()),
+                    can_be_stored_in_memory),
                 filter)));
 }
 
