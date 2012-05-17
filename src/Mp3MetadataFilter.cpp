@@ -1,5 +1,7 @@
 #include "Mp3MetadataFilter.hpp"
 
+#include <fstream>
+
 #include <mpegfile.h>
 
 #include "Log.hpp"
@@ -78,19 +80,53 @@ bool Mp3MetadataFilter::IsMimeTypeSupported(
 //------------------------------------------------------------------------------
 bool Mp3MetadataFilter::CanProcess(const std::string& path) const
 {
-    TagLib::MPEG::File file(path.c_str());
-    if (!file.isValid())
+    std::ifstream file(path.c_str());
+    if (!file.is_open())
     {
         return false;
     }
 
-    if (file.firstFrameOffset() == -1 ||
-        file.lastFrameOffset() == -1)
+    uint8_t header[3] = {0};
+    file.read(reinterpret_cast<char *>(header), 3);
+    if (file.gcount() != 3)
     {
         return false;
     }
 
-    return true;
+    if (header[0] == 'I' &&
+        header[1] == 'D' &&
+        header[2] == '3')
+    {
+        // assume that ID3 is used mostly with MP3
+        // of course it's not true, but better try to process another file
+        return true;
+    }
+
+    if (header[0] == 0xFF &&
+        (header[1] & 0xF0) == 0xF0)
+    {
+        file.seekg(-128, std::fstream::end);
+        if (!file.good())
+        {
+            return false;
+        }
+
+        file.read(reinterpret_cast<char *>(header), 3);
+        if (file.gcount() != 3)
+        {
+            return false;
+        }
+
+        if (header[0] == 'T' &&
+            header[1] == 'A' &&
+            header[2] == 'G')
+        {
+            // mp3 with idv1
+            return true;
+        }
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
