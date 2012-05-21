@@ -1,5 +1,7 @@
 #include "MetadataFilterFactory.hpp"
 
+#include <algorithm>
+
 #include "Config.hpp"
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
@@ -62,6 +64,18 @@ static FilterRegistry* GetFilterRegistry()
     return filter_registry;
 }
 
+static bool IsMimeTypeExcluded(const std::string& type)
+{
+    const std::vector<std::string>& excluded_types =
+        ExifAdapter::Config::GetConfig()->GetExcludedTypes();
+    if (std::find(excluded_types.begin(), excluded_types.end(), type) ==
+        excluded_types.end())
+    {
+        return false;
+    }
+    return true;
+}
+
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
@@ -70,6 +84,11 @@ libecap::shared_ptr<MetadataFilter> MetadataFilterFactory::CreateFilter(
 {
     if (mime_type.find("application/octet-stream") == 0)
     {
+        if (IsMimeTypeExcluded("application/octet-stream"))
+        {
+            return libecap::shared_ptr<MetadataFilter>();
+        }
+
         Log(libecap::flXaction | libecap::ilDebug)
             << "creating runtime metadata filter for "
             << "application/octet-stream mime type";
@@ -99,10 +118,18 @@ bool MetadataFilterFactory::IsMimeTypeSupported(
 {
     if (mime_type.find("multipart/form-data") == 0)
     {
+        if (IsMimeTypeExcluded("multipart/form-data"))
+        {
+            return false;
+        }
         return true;
     }
     else if (mime_type.find("application/octet-stream") == 0)
     {
+        if (IsMimeTypeExcluded("multipart/form-data"))
+        {
+            return false;
+        }
         return true;
     }
 
