@@ -1,37 +1,30 @@
 #include "ExivMetadataFilter.hpp"
 
-#include <exiv2/error.hpp>
-#include <exiv2/image.hpp>
+#include <exiv2/exiv2.hpp>
 
 #include "Log.hpp"
 
 using namespace ExifAdapter;
 
-// http://dev.exiv2.org/projects/exiv2/wiki/Supported_image_formats
-static const char* mime_types[] = {
-    "image/jpeg",
-    "image/x-exv",
-    "image/x-canon-cr2",
-    "image/x-canon-crw",
-    "image/tiff",
-    "image/x-nikon-nef",
-    "image/x-pentax-pef",
-    "image/x-samsung-srw",
-    "image/x-olympus-orf",
-    "image/png",
-    "image/pgf",
-    "application/postscript",
-    "application/rdf+xml",
-    "image/x-photoshop",
-    "image/jp2",
-    NULL,
-};
 
 //------------------------------------------------------------------------------
 ExivMetadataFilter::ExivMetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered exiv metadata filter";
+    // http://dev.exiv2.org/projects/exiv2/wiki/Supported_image_formats
+    mime_types.push_back("image/jpeg");
+    mime_types.push_back("image/x-exv");
+    mime_types.push_back("image/x-canon-cr2");
+    mime_types.push_back("image/x-canon-crw");
+    mime_types.push_back("image/tiff");
+    mime_types.push_back("image/x-nikon-nef");
+    mime_types.push_back("image/x-pentax-pef");
+    mime_types.push_back("image/x-samsung-srw");
+    mime_types.push_back("image/x-olympus-orf");
+    mime_types.push_back("image/png");
+    mime_types.push_back("image/pgf");
+    mime_types.push_back("application/rdf+xml");
+    mime_types.push_back("image/x-photoshop");
+    mime_types.push_back("image/jp2");
 }
 
 //------------------------------------------------------------------------------
@@ -91,28 +84,62 @@ void ExivMetadataFilter::ProcessMemory(
 }
 
 //------------------------------------------------------------------------------
-bool ExivMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
+bool ExivMetadataFilter::CanProcess(const std::string& path) const
 {
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
+    int image_type = Exiv2::ImageFactory::getType(path);
+    return IsImageTypeSupported(image_type);
 }
 
 //------------------------------------------------------------------------------
-bool ExivMetadataFilter::CanProcess(const std::string& path) const
+bool ExivMetadataFilter::IsImageTypeSupported(int type) const
 {
-    if (Exiv2::ImageFactory::getType(path) == Exiv2::ImageType::none)
+    if (type == Exiv2::ImageType::none)
     {
         return false;
     }
 
-    return true;
+    std::string mime_type;
+
+    switch (type)
+    {
+    case Exiv2::ImageType::jpeg:
+        mime_type = "image/jpeg";
+        break;
+    case Exiv2::ImageType::exv:
+        mime_type = "image/x-exv";
+        break;
+    case Exiv2::ImageType::cr2:
+        mime_type = "image/x-canon-cr2";
+        break;
+    case Exiv2::ImageType::crw:
+        mime_type = "image/x-canon-crw";
+        break;
+    case Exiv2::ImageType::tiff:
+        mime_type = "image/tiff";
+        break;
+    case Exiv2::ImageType::orf:
+        mime_type = "image/x-olympus-orf";
+        break;
+    case Exiv2::ImageType::png:
+        mime_type = "image/png";
+        break;
+    case Exiv2::ImageType::pgf:
+        mime_type = "image/pgf";
+        break;
+    case Exiv2::ImageType::xmp:
+        mime_type = "application/rdf+xml";
+        break;
+    case Exiv2::ImageType::psd:
+        mime_type = "image/x-photoshop";
+        break;
+    case Exiv2::ImageType::jp2:
+        mime_type = "image/jp2";
+        break;
+    default:
+        return false;
+    }
+
+    return IsMimeTypeSupported(mime_type);
 }
 
 //------------------------------------------------------------------------------
@@ -120,13 +147,8 @@ bool ExivMetadataFilter::CanProcess(
     uint8_t* buffer,
     int size) const
 {
-    if (Exiv2::ImageFactory::getType(buffer, size) ==
-        Exiv2::ImageType::none)
-    {
-        return false;
-    }
-
-    return true;
+    int type = Exiv2::ImageFactory::getType(buffer, size);
+    return IsImageTypeSupported(type);
 }
 
 //------------------------------------------------------------------------------

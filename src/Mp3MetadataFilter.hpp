@@ -19,8 +19,6 @@ public:
         uint8_t** buffer,
         int* size);
 
-    bool IsMimeTypeSupported(const std::string& mime_type) const;
-
     bool CanProcess(const std::string& path) const;
     bool CanProcess(
         uint8_t* buffer,

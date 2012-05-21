@@ -8,12 +8,6 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "application/pdf",
-    NULL,
-};
-
-
 static void StripMetadata(PoDoFo::PdfMemDocument *document)
 {
     PoDoFo::PdfObject *metadata = document->GetMetadata();
@@ -43,8 +37,8 @@ using namespace ExifAdapter;
 //------------------------------------------------------------------------------
 PdfMetadataFilter::PdfMetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered pdf metadata filter";
+    mime_types.push_back("application/pdf");
+
     PoDoFo::PdfError::EnableDebug(false);
 }
 
@@ -119,20 +113,6 @@ void PdfMetadataFilter::ProcessMemory(
     {
         throw MetadataFilter::Exception(e.what());
     }
-}
-
-//------------------------------------------------------------------------------
-bool PdfMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 //------------------------------------------------------------------------------

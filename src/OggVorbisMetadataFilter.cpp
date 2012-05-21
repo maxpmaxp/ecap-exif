@@ -4,18 +4,12 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "audio/ogg",
-    NULL,
-};
-
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
 OggVorbisMetadataFilter::OggVorbisMetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered ogg metadata filter";
+    mime_types.push_back("audio/ogg");
 }
 
 //------------------------------------------------------------------------------
@@ -77,21 +71,6 @@ void OggVorbisMetadataFilter::ProcessMemory(
     (void) buffer;
     (void) size;
     throw MetadataFilter::Exception("filter can't process in memory");
-}
-
-//------------------------------------------------------------------------------
-bool OggVorbisMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 //------------------------------------------------------------------------------

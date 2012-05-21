@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 #include <libecap/common/named_values.h>
 
@@ -21,6 +22,7 @@ public:
 
     std::string GetTemporaryFilenameFormat();
     uint64_t GetMemoryFilesizeLimit();
+    const std::vector<std::string>& GetExcludedTypes() const;
 
 private:
     Config();
@@ -30,6 +32,7 @@ private:
 
     std::string tmp_filename_format;
     uint64_t memory_filesize_limit;
+    std::vector<std::string> excluded_types;;
 };
 
 }

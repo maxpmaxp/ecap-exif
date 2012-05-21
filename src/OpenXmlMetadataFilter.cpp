@@ -6,13 +6,6 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    NULL,
-};
-
 static const char *core_xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></cp:coreProperties>";
 
 using namespace ExifAdapter;
@@ -20,8 +13,9 @@ using namespace ExifAdapter;
 //------------------------------------------------------------------------------
 OpenXmlMetadataFilter::OpenXmlMetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered openxml metadata filter";
+    mime_types.push_back("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    mime_types.push_back("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    mime_types.push_back("application/vnd.openxmlformats-officedocument.presentationml.presentation");
 }
 
 //------------------------------------------------------------------------------
@@ -94,20 +88,6 @@ void OpenXmlMetadataFilter::ProcessMemory(
     (void) buffer;
     (void) size;
     throw MetadataFilter::Exception("filter can't process in memory");
-}
-
-//------------------------------------------------------------------------------
-bool OpenXmlMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 //------------------------------------------------------------------------------

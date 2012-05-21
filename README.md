@@ -5,9 +5,17 @@ primarly JPEG.
 
 ## Installation
 
-libecap and exiv2 libraries are required to build and use the
-adapter. libecap is available at http://e-cap.org/. The adapter can be
-built and installed from sources, usually by running:
+libecap and several other dependencies are required to build and use
+the adapter. libecap is available at http://e-cap.org/.
+
+Dependencies:
+* exiv2
+* taglib
+* libzip
+* podofo
+
+The adapter can be built and installed from sources, usually by
+running:
 
     $ ./bootstrap.sh
     $ ./configure
@@ -22,6 +30,9 @@ built and installed from sources, usually by running:
 * `memory_filesize_limit`
     Files with size greater than limit will be stored in temporary
     disk storage, otherwise processing will be done in RAM.
+* `exclude_types`
+    List of semicolon seprated MIME types which shouldn't be
+    handled by adapter.
 
 ## Supported MIME types
 
@@ -36,7 +47,6 @@ built and installed from sources, usually by running:
 * image/x-olympus-orf
 * image/png
 * image/pgf
-* application/postscript
 * application/rdf+xml
 * image/x-photoshop
 * image/jp2

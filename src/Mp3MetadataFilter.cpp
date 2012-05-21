@@ -6,18 +6,12 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "audio/mpeg",
-    NULL,
-};
-
 using namespace ExifAdapter;
 
 //------------------------------------------------------------------------------
 Mp3MetadataFilter::Mp3MetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered mp3 metadata filter";
+    mime_types.push_back("audio/mpeg");
 }
 
 //------------------------------------------------------------------------------
@@ -61,20 +55,6 @@ void Mp3MetadataFilter::ProcessMemory(
     (void) buffer;
     (void) size;
     throw MetadataFilter::Exception("filter can't process in memory");
-}
-
-//------------------------------------------------------------------------------
-bool Mp3MetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 //------------------------------------------------------------------------------

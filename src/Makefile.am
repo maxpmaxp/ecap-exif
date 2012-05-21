@@ -7,6 +7,7 @@ EXTRA_DIST = \
 	ExivMetadataFilter.cpp \
 	Log.cpp \
 	MemoryAreaDetails.cpp \
+	MetadataFilter.cpp \
 	MetadataFilterFactory.cpp \
 	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \
@@ -54,6 +55,7 @@ ecap_adapter_exif_la_SOURCES = \
 	ContentMemoryIO.cpp \
 	ExivMetadataFilter.cpp \
 	MemoryAreaDetails.cpp \
+	MetadataFilter.cpp \
 	MetadataFilterFactory.cpp \
 	Mp3MetadataFilter.cpp \
 	Mp4MetadataFilter.cpp \

@@ -6,14 +6,6 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "application/vnd.oasis.opendocument.text",
-    "application/vnd.oasis.opendocument.presentation",
-    "application/vnd.oasis.opendocument.spreadsheet",
-    "application/vnd.oasis.opendocument.graphics",
-    NULL,
-};
-
 static const char *meta_xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><office:document-meta xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:meta=\"urn:oasis:names:tc:opendocument:xmlns:meta:1.0\" xmlns:ooo=\"http://openoffice.org/2004/office\" xmlns:grddl=\"http://www.w3.org/2003/g/data-view#\" office:version=\"1.2\"></office:document-meta>";
 
 using namespace ExifAdapter;
@@ -21,8 +13,10 @@ using namespace ExifAdapter;
 //------------------------------------------------------------------------------
 OdfMetadataFilter::OdfMetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered odf metadata filter";
+    mime_types.push_back("application/vnd.oasis.opendocument.text");
+    mime_types.push_back("application/vnd.oasis.opendocument.presentation");
+    mime_types.push_back("application/vnd.oasis.opendocument.spreadsheet");
+    mime_types.push_back("application/vnd.oasis.opendocument.graphics");
 }
 
 //------------------------------------------------------------------------------
@@ -92,20 +86,6 @@ void OdfMetadataFilter::ProcessMemory(
     (void) buffer;
     (void) size;
     throw MetadataFilter::Exception("filter can't process in memory");
-}
-
-//------------------------------------------------------------------------------
-bool OdfMetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 //------------------------------------------------------------------------------

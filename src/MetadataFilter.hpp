@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 namespace ExifAdapter
 {
@@ -40,7 +41,10 @@ public:
         uint8_t** buffer,
         int* size) = 0;
 
-    virtual bool IsMimeTypeSupported(const std::string& mime_type) const = 0;
+    virtual bool IsMimeTypeSupported(const std::string& mime_type) const;
+
+    // returns number of enabled types
+    unsigned DisableMimeTypes(const std::vector<std::string>& mime_types);
 
     virtual bool CanProcess(const std::string& path) const = 0;
     virtual bool CanProcess(
@@ -48,6 +52,9 @@ public:
         int size) const = 0;
 
     virtual bool SupportsInMemoryProcessing() const = 0;
+
+protected:
+    std::vector<std::string> mime_types;
 };
 
 }

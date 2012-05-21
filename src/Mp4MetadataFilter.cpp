@@ -10,19 +10,6 @@
 
 #include "Log.hpp"
 
-static const char* mime_types[] = {
-    "audio/3gpp",
-    "audio/3gpp2",
-    "video/3gpp",
-    "video/3gpp2",
-    "audio/mp4",
-    "audio/mp4a-latm",
-    "audio/x-m4a",
-    "video/mp4",
-    "video/quicktime",
-    NULL,
-};
-
 #define BE_32(x) ((((uint8_t*)(x))[0] << 24) | \
                   (((uint8_t*)(x))[1] << 16) | \
                   (((uint8_t*)(x))[2] << 8) |  \
@@ -33,8 +20,15 @@ using namespace ExifAdapter;
 //------------------------------------------------------------------------------
 Mp4MetadataFilter::Mp4MetadataFilter()
 {
-    Log(libecap::flXaction | libecap::ilDebug) <<
-        "registered mp4 metadata filter";
+    mime_types.push_back("audio/3gpp");
+    mime_types.push_back("audio/3gpp2");
+    mime_types.push_back("video/3gpp");
+    mime_types.push_back("video/3gpp2");
+    mime_types.push_back("audio/mp4");
+    mime_types.push_back("audio/mp4a-latm");
+    mime_types.push_back("audio/x-m4a");
+    mime_types.push_back("video/mp4");
+    mime_types.push_back("video/quicktime");
 }
 
 //------------------------------------------------------------------------------
@@ -195,20 +189,6 @@ void Mp4MetadataFilter::ProcessMemory(
 
         position += atom_size;
     }
-}
-
-//------------------------------------------------------------------------------
-bool Mp4MetadataFilter::IsMimeTypeSupported(
-    const std::string& mime_type) const
-{
-    for (int i = 0; mime_types[i] != NULL; ++i)
-    {
-        if (mime_type == mime_types[i])
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 //------------------------------------------------------------------------------

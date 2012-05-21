@@ -1,5 +1,6 @@
 #include "MetadataFilterFactory.hpp"
 
+#include "Config.hpp"
 #include "ExivMetadataFilter.hpp"
 #include "Log.hpp"
 #include "Mp3MetadataFilter.hpp"
@@ -36,10 +37,18 @@ static FilterRegistry* GetFilterRegistry()
     {
         filter_registry = new FilterRegistry();
 
-#define REGISTER_FILTER(filter)                               \
-        filter_registry->RegisterFilter(                      \
-            libecap::shared_ptr<ExifAdapter::MetadataFilter>( \
-                new filter()));
+        const std::vector<std::string>& excluded_types =
+            ExifAdapter::Config::GetConfig()->GetExcludedTypes();
+        libecap::shared_ptr<ExifAdapter::MetadataFilter> filter;
+
+#define REGISTER_FILTER(name)                                       \
+        filter.reset(new name());                                   \
+        if (filter->DisableMimeTypes(excluded_types) != 0)          \
+        {                                                           \
+            ExifAdapter::Log(libecap::flXaction | libecap::ilDebug) \
+                << "registered " << #name;                          \
+            filter_registry->RegisterFilter(filter);                \
+        }
 
         REGISTER_FILTER(ExifAdapter::ExivMetadataFilter);
         REGISTER_FILTER(ExifAdapter::Mp4MetadataFilter);

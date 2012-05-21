@@ -6,6 +6,7 @@
 
 #include "Config.hpp"
 #include "Log.hpp"
+#include "MetadataFilterFactory.hpp"
 #include "Xaction.hpp"
 
 using namespace ExifAdapter;
@@ -35,6 +36,9 @@ void Service::configure(const libecap::Options &options)
 
     Config* config = Config::GetConfig();
     options.visitEachOption(*config);
+
+    // register all the filters
+    (void) MetadataFilterFactory::GetFilters();
 }
 
 //------------------------------------------------------------------------------
